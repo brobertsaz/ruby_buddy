@@ -1,0 +1,18 @@
+<% content_for :title, "Edit Your Profile" %>
+
+<%= section_container do %>
+  <%# Page Header %>
+  <div class="mb-8">
+    <h1 class="text-4xl font-black tracking-tight text-zinc-900 text-center">✏️ Edit Your Profile</h1>
+    <p class="text-zinc-700 font-medium text-lg mt-2 text-center">Update your information to help connect with the right people</p>
+  </div>
+
+  <%# Form %>
+  <%= render "form", profile: @profile %>
+
+  <%# Navigation %>
+  <div class="max-w-2xl mx-auto mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+    <%= button_secondary "👀 View Profile", @profile %>
+    <%= button_secondary "← Back to Mentors", profiles_path %>
+  </div>
+<% end %>

@@ -1,0 +1,32 @@
+<div id="<%= dom_id mentorship_request %>" class="w-full rounded-lg border border-zinc-700 bg-zinc-800 p-4 shadow-sm">
+  <div class="flex items-start justify-between">
+    <div>
+      <h3 class="font-semibold text-lg text-white"><%= mentorship_request.topic.presence || "Mentorship Request" %></h3>
+      <p class="text-sm text-zinc-400">
+        <% mentee_name = mentorship_request.mentee&.profile&.name.presence || mentorship_request.mentee&.email %>
+        <% mentor_name = mentorship_request.mentor&.profile&.name.presence || mentorship_request.mentor&.email %>
+        <% if mentee_name.present? %>
+          <span>Mentee: <%= mentee_name %></span>
+        <% end %>
+        <% if mentor_name.present? %>
+          <span class="ml-2">Mentor: <%= mentor_name %></span>
+        <% end %>
+      </p>
+    </div>
+    <%# Status badge %>
+    <% status = mentorship_request.status.to_s %>
+    <% badge_classes = {
+      "open" => "bg-emerald-600 text-white",
+      "accepted" => "bg-blue-600 text-white",
+      "closed" => "bg-zinc-600 text-white"
+    }[status] || "bg-zinc-600 text-white" %>
+    <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium <%= badge_classes %>"><%= status.capitalize %></span>
+  </div>
+
+  <% if mentorship_request.goals.present? %>
+    <p class="mt-2 text-sm text-zinc-300 whitespace-pre-wrap"><%= mentorship_request.goals %></p>
+  <% end %>
+  <% if mentorship_request.preferred_times.present? %>
+    <p class="mt-1 text-xs text-zinc-400">Preferred times: <%= mentorship_request.preferred_times %></p>
+  <% end %>
+</div>

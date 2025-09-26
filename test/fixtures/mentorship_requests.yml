@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  mentee: one
+  mentor: one
+  topic: MyString
+  goals: MyText
+  preferred_times: MyString
+  status: 1
+
+two:
+  mentee: two
+  mentor: two
+  topic: MyString
+  goals: MyText
+  preferred_times: MyString
+  status: 1

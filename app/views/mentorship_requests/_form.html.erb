@@ -1,0 +1,50 @@
+<div class="max-w-2xl mx-auto">
+  <div class="rounded-xl border-2 border-zinc-700 bg-zinc-800 p-8 shadow-xl">
+    <%= form_with(model: mentorship_request, class: "space-y-6") do |form| %>
+      <% if mentorship_request.errors.any? %>
+        <div id="error_explanation" class="bg-red-50 text-red-500 px-4 py-3 font-medium rounded-lg border-l-4 border-red-500">
+          <h2 class="font-semibold mb-2"><%= pluralize(mentorship_request.errors.count, "error") %> prevented this request from being saved:</h2>
+          <ul class="list-disc ml-4 space-y-1">
+            <% mentorship_request.errors.each do |error| %>
+              <li><%= error.full_message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <% if @mentorship_request.mentor_id.present? %>
+        <%= form.hidden_field :mentor_id %>
+        <div class="rounded-lg bg-rose-900/20 border border-rose-500/30 px-4 py-3">
+          <p class="text-rose-300 text-sm font-medium">
+            🎯 This request will be sent to a specific mentor
+          </p>
+        </div>
+      <% end %>
+
+      <div>
+        <%= form.label :topic, "What topic would you like mentorship on?", class: form_label_classes %>
+        <%= form.text_field :topic, 
+              class: form_input_classes(errors: mentorship_request.errors[:topic]),
+              placeholder: "e.g., Rails basics, Testing, Career advice" %>
+      </div>
+
+      <div>
+        <%= form.label :goals, "What are your specific goals?", class: form_label_classes %>
+        <%= form.text_area :goals, rows: 4, 
+              class: form_input_classes(errors: mentorship_request.errors[:goals]),
+              placeholder: "Describe what you're hoping to learn or achieve..." %>
+      </div>
+
+      <div>
+        <%= form.label :preferred_times, "When are you typically available?", class: form_label_classes %>
+        <%= form.text_field :preferred_times, 
+              class: form_input_classes(errors: mentorship_request.errors[:preferred_times]),
+              placeholder: "e.g., Weekday evenings EST, Saturday mornings" %>
+      </div>
+
+      <div class="pt-4">
+        <%= form.submit "Create Mentorship Request", class: "w-full rounded-lg px-4 py-3 bg-rose-600 hover:bg-rose-700 text-white font-semibold transition-colors shadow-lg" %>
+      </div>
+    <% end %>
+  </div>
+</div>

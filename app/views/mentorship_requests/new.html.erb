@@ -1,0 +1,17 @@
+<% content_for :title, "New Mentorship Request" %>
+
+<%= section_container do %>
+  <%# Page Header %>
+  <div class="mb-8">
+    <h1 class="text-4xl font-black tracking-tight text-zinc-900 text-center">✨ Request Mentorship</h1>
+    <p class="text-zinc-700 font-medium text-lg mt-2 text-center">Connect with an experienced Ruby developer to guide your journey!</p>
+  </div>
+
+  <%# Form %>
+  <%= render "form", mentorship_request: @mentorship_request %>
+
+  <%# Navigation %>
+  <div class="max-w-2xl mx-auto mt-8 text-center">
+    <%= button_secondary "← Back to Requests", mentorship_requests_path %>
+  </div>
+<% end %>

@@ -1,0 +1,35 @@
+<% content_for :title, "Showing mentorship request" %>
+
+<div class="md:w-2/3 w-full">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <h1 class="font-bold text-4xl">Showing mentorship request</h1>
+
+  <%= render @mentorship_request %>
+
+  <div class="mt-10">
+    <h2 class="text-2xl font-semibold mb-4">Conversation</h2>
+    <%= turbo_stream_from "mentorship_request_#{@mentorship_request.id}_messages" %>
+    <div id="<%= dom_id @mentorship_request, :messages %>" class="space-y-4">
+      <% @mentorship_request.messages.order(:created_at).each do |message| %>
+        <%= render message %>
+      <% end %>
+    </div>
+
+    <% if user_signed_in? && [@mentorship_request.mentee_id, @mentorship_request.mentor_id].compact.include?(current_user.id) %>
+      <div class="mt-6 p-4 border rounded-lg bg-white/60">
+        <%= render "messages/form", message: Message.new(mentorship_request: @mentorship_request) %>
+      </div>
+    <% else %>
+      <p class="text-sm text-gray-500 mt-2">Sign in and be part of this request to post messages.</p>
+    <% end %>
+  </div>
+
+  <div class="mt-8">
+    <%= link_to "Edit this mentorship request", edit_mentorship_request_path(@mentorship_request), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+    <%= link_to "Back to mentorship requests", mentorship_requests_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+    <%= button_to "Destroy this mentorship request", @mentorship_request, method: :delete, form_class: "sm:inline-block mt-2 sm:mt-0 sm:ml-2", class: "w-full rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
+  </div>
+</div>

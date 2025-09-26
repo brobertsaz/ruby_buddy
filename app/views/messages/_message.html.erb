@@ -1,0 +1,19 @@
+<% mine = defined?(current_user) && message.user_id == current_user&.id %>
+<div class="w-full py-1 flex <%= mine ? 'justify-end' : 'justify-start' %>">
+  <div class="flex items-end gap-2 max-w-[80%] <%= mine ? 'flex-row-reverse' : 'flex-row' %>">
+    <!-- Avatar -->
+    <div class="shrink-0">
+      <div class="h-8 w-8 rounded-full text-white grid place-items-center text-xs font-semibold <%= avatar_color_class(message.user) %>">
+        <%= user_initials(message.user) %>
+      </div>
+    </div>
+
+    <!-- Bubble -->
+    <div id="<%= dom_id message %>" class="rounded-2xl px-3 py-2 text-sm shadow <%= mine ? 'bg-rose-600 text-white' : 'bg-white ring-1 ring-zinc-200 text-zinc-900' %>">
+      <div class="opacity-80 text-[11px] mb-0.5">
+        <%= display_name(message.user) %> · <%= time_ago_in_words(message.created_at) %> ago
+      </div>
+      <div class="whitespace-pre-wrap leading-snug"><%= message.body %></div>
+    </div>
+  </div>
+</div>

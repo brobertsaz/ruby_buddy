@@ -1,0 +1,68 @@
+<section class="grid lg:grid-cols-2 gap-10 items-center">
+  <div>
+    <h1 class="text-4xl sm:text-6xl font-black tracking-tight text-zinc-900">
+      💎 Mentor the next Rubyist.
+      <br>
+      <span class="text-rose-600">Or find yours!</span> 🚀
+    </h1>
+    <p class="mt-6 text-zinc-700 text-xl font-medium">
+      <span class="text-red-600 font-bold">Free mentorship</span> connecting early career developers with friendly volunteer mentors from the Ruby community.
+      If you're starting out or in your first year of programming, we'll pair you up with an experienced Rubyist who's been where you are! ✨
+    </p>
+    <div class="mt-8 flex flex-wrap gap-4">
+      <%= link_to "🚀 Find a mentor", profiles_path, class: "inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-red-500 to-red-600 px-6 py-3 text-white font-bold text-lg shadow-xl hover:from-red-600 hover:to-red-700 transform hover:scale-105 transition-all ruby-sparkle" %>
+      <%= link_to "📝 Request mentorship", new_mentorship_request_path, class: "inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3 text-red-700 font-bold text-lg ring-2 ring-red-200 hover:bg-red-50 hover:ring-red-300 transform hover:scale-105 transition-all shadow-lg" %>
+    </div>
+  </div>
+  <div class="relative">
+    <div class="absolute -inset-8 -z-10 bg-gradient-to-tr from-red-200 via-red-100 to-red-50 rounded-3xl blur-3xl opacity-60"></div>
+    <div class="rounded-3xl border-2 border-zinc-700 bg-zinc-800 p-8 shadow-2xl">
+      <div class="grid grid-cols-2 gap-6">
+        <div class="rounded-2xl bg-zinc-700 p-5 border border-zinc-600">
+          <p class="text-sm text-rose-400 font-medium">💎 We are nice</p>
+          <p class="font-black text-white text-lg">Free mentorship</p>
+        </div>
+        <div class="rounded-2xl bg-zinc-700 p-5 border border-zinc-600">
+          <p class="text-sm text-rose-400 font-medium">🤝 Help wanted</p>
+          <p class="font-black text-white text-lg">Anyone can mentor</p>
+        </div>
+        <div class="rounded-2xl bg-zinc-700 p-5 border border-zinc-600">
+          <p class="text-sm text-rose-400 font-medium">🚀 Built with</p>
+          <p class="font-black text-white text-lg">Ruby on Rails</p>
+        </div>
+        <div class="rounded-2xl bg-zinc-700 p-5 border border-zinc-600">
+          <p class="text-sm text-rose-400 font-medium">💬 Connect</p>
+          <p class="font-black text-white text-lg">Real conversations</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mt-16 grid lg:grid-cols-2 gap-12 items-center">
+  <div class="rounded-3xl border-2 border-zinc-700 bg-zinc-800 p-8 shadow-xl">
+    <h2 class="text-3xl font-black text-rose-400 mb-4">💎 We are nice</h2>
+    <h3 class="text-xl font-bold text-white mb-3">Free mentorship. Always.</h3>
+    <p class="text-zinc-300 font-medium leading-relaxed">
+      If you're starting out or in your first year of a programming career, we'll pair you up with an existing Rubyist.
+      We match you with someone with the experience you're looking for and you can ask whatever you like.
+      <span class="text-rose-400 font-bold">No cost, no catch, just community.</span>
+    </p>
+    <div class="mt-6">
+      <%= link_to "🚀 Find your mentor", profiles_path, class: "inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2 text-white font-bold hover:bg-rose-700 transition-colors shadow-lg" %>
+    </div>
+  </div>
+
+  <div class="rounded-3xl border-2 border-zinc-700 bg-zinc-800 p-8 shadow-xl">
+    <h2 class="text-3xl font-black text-rose-400 mb-4">🤝 Help wanted</h2>
+    <h3 class="text-xl font-bold text-white mb-3">Anyone can be a mentor.</h3>
+    <p class="text-zinc-300 font-medium leading-relaxed">
+      Every working Ruby developer has experiences to offer to those following us into our community.
+      You only need a year of programming before you can give back.
+      <span class="text-rose-400 font-bold">Share your journey, help someone else's.</span>
+    </p>
+    <div class="mt-6">
+      <%= link_to "✨ Become a mentor", new_profile_path, class: "inline-flex items-center gap-2 rounded-xl bg-zinc-700 px-4 py-2 text-white font-bold border border-zinc-600 hover:bg-zinc-600 transition-colors shadow-lg" %>
+    </div>
+  </div>
+</section>

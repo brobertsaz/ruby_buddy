@@ -1,0 +1,17 @@
+<% content_for :title, "Create Your Profile" %>
+
+<%= section_container do %>
+  <%# Page Header %>
+  <div class="mb-8">
+    <h1 class="text-4xl font-black tracking-tight text-zinc-900 text-center">✨ Create Your Profile</h1>
+    <p class="text-zinc-700 font-medium text-lg mt-2 text-center">Join the Ruby mentorship community! Share your experience or find guidance.</p>
+  </div>
+
+  <%# Form %>
+  <%= render "form", profile: @profile %>
+
+  <%# Navigation %>
+  <div class="max-w-2xl mx-auto mt-8 text-center">
+    <%= button_secondary "← Back to Mentors", profiles_path %>
+  </div>
+<% end %>

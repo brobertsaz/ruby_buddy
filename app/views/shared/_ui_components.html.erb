@@ -1,0 +1,178 @@
+<%# Shared UI Components for Consistent Styling %>
+
+<%# Page Headers %>
+<% content_for :page_header do %>
+  <div class="mb-8">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-4xl font-black tracking-tight text-zinc-900">
+          <%= yield :header_title %>
+        </h1>
+        <% if content_for?(:header_description) %>
+          <p class="text-zinc-700 font-medium text-lg mt-2">
+            <%= yield :header_description %>
+          </p>
+        <% end %>
+      </div>
+      <% if content_for?(:header_action) %>
+        <div>
+          <%= yield :header_action %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<%# Card Containers %>
+<% content_for :card_wrapper do %>
+  <div class="rounded-xl border-2 border-zinc-700 bg-zinc-800 p-6 shadow-xl">
+    <%= yield %>
+  </div>
+<% end %>
+
+<%# Light Card Containers %>
+<% content_for :light_card_wrapper do %>
+  <div class="rounded-xl bg-white/90 border border-zinc-200 p-6 shadow-lg">
+    <%= yield %>
+  </div>
+<% end %>
+
+<%# Form Wrappers %>
+<% content_for :form_wrapper do %>
+  <div class="max-w-2xl mx-auto">
+    <div class="rounded-xl border-2 border-zinc-700 bg-zinc-800 p-8 shadow-xl">
+      <%= yield %>
+    </div>
+  </div>
+<% end %>
+
+<%# Buttons - Primary %>
+<%
+def button_primary(text, path = nil, **options)
+  classes = "inline-flex items-center gap-2 rounded-lg bg-rose-600 px-4 py-3 text-white font-semibold hover:bg-rose-700 transition-colors shadow-lg #{options[:class]}"
+  
+  if path
+    link_to text, path, class: classes, **options.except(:class)
+  else
+    content_tag :button, text, class: classes, **options.except(:class)
+  end
+end
+%>
+
+<%# Buttons - Secondary %>
+<%
+def button_secondary(text, path = nil, **options)
+  classes = "inline-flex items-center gap-2 rounded-lg bg-zinc-700 px-4 py-3 text-white font-semibold border border-zinc-600 hover:bg-zinc-600 transition-colors shadow-sm #{options[:class]}"
+  
+  if path
+    link_to text, path, class: classes, **options.except(:class)
+  else
+    content_tag :button, text, class: classes, **options.except(:class)
+  end
+end
+%>
+
+<%# Buttons - Danger %>
+<%
+def button_danger(text, path = nil, **options)
+  classes = "inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-3 text-white font-semibold hover:bg-red-700 transition-colors shadow-lg #{options[:class]}"
+  
+  if path
+    link_to text, path, class: classes, **options.except(:class)
+  else
+    content_tag :button, text, class: classes, **options.except(:class)
+  end
+end
+%>
+
+<%# Form Input Classes %>
+<%
+def form_input_classes(errors: [])
+  base_classes = "block shadow-sm rounded-lg border px-3 py-2 w-full bg-zinc-700 text-white transition-colors"
+  if errors.any?
+    "#{base_classes} border-red-400 focus:ring-red-500 focus:border-red-500"
+  else
+    "#{base_classes} border-zinc-600 focus:ring-rose-500 focus:border-rose-500"
+  end
+end
+%>
+
+<%# Form Label Classes %>
+<%
+def form_label_classes
+  "block text-sm font-medium text-rose-400 mb-2"
+end
+%>
+
+<%# Light Form Input Classes (for auth pages) %>
+<%
+def light_form_input_classes(errors: [])
+  base_classes = "mt-1 block w-full rounded-lg border px-3 py-2 bg-white transition-colors"
+  if errors.any?
+    "#{base_classes} border-red-400 focus:ring-red-500 focus:border-red-500"
+  else
+    "#{base_classes} border-zinc-300 focus:ring-rose-500 focus:border-rose-500"
+  end
+end
+%>
+
+<%# Light Form Label Classes (for auth pages) %>
+<%
+def light_form_label_classes
+  "block text-sm font-medium text-gray-700"
+end
+%>
+
+<%# Status Badges %>
+<%
+def status_badge(text, type = :default)
+  case type
+  when :mentor
+    classes = "inline-flex items-center rounded-full bg-rose-600 px-3 py-1 text-xs font-bold text-white shadow-lg"
+  when :mentee
+    classes = "inline-flex items-center rounded-full bg-blue-600 px-3 py-1 text-xs font-bold text-white shadow-lg"
+  when :skill
+    classes = "inline-flex items-center rounded-full bg-rose-600 text-white text-xs px-3 py-1 shadow-md font-bold"
+  when :success
+    classes = "inline-flex items-center rounded-full bg-green-600 px-3 py-1 text-xs font-bold text-white shadow-lg"
+  when :warning
+    classes = "inline-flex items-center rounded-full bg-yellow-600 px-3 py-1 text-xs font-bold text-white shadow-lg"
+  when :danger
+    classes = "inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-xs font-bold text-white shadow-lg"
+  else
+    classes = "inline-flex items-center rounded-full bg-zinc-600 px-3 py-1 text-xs font-bold text-white shadow-lg"
+  end
+  
+  content_tag :span, text, class: classes
+end
+%>
+
+<%# Empty State %>
+<%
+def empty_state(message, icon = "📭")
+  content_tag :div, class: "text-center my-12 py-8" do
+    content_tag(:div, icon, class: "text-4xl mb-4") +
+    content_tag(:p, message, class: "text-zinc-600 font-medium text-lg")
+  end
+end
+%>
+
+<%# Grid Containers %>
+<%
+def responsive_grid(**options)
+  classes = "grid sm:grid-cols-2 lg:grid-cols-3 gap-6 #{options[:class]}"
+  content_tag :div, class: classes do
+    yield
+  end
+end
+%>
+
+<%# Section Containers %>
+<%
+def section_container(**options)
+  classes = "space-y-6 #{options[:class]}"
+  content_tag :section, class: classes do
+    yield
+  end
+end
+%>

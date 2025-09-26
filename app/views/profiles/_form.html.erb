@@ -1,0 +1,81 @@
+<div class="max-w-2xl mx-auto">
+  <div class="rounded-xl border-2 border-zinc-700 bg-zinc-800 p-8 shadow-xl">
+    <%= form_with(model: profile, class: "space-y-6") do |form| %>
+  <% if profile.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(profile.errors.count, "error") %> prohibited this profile from being saved:</h2>
+
+      <ul class="list-disc ml-6">
+        <% profile.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :name, class: form_label_classes %>
+    <%= form.text_field :name, class: form_input_classes(errors: profile.errors[:name]), placeholder: "Your full name" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :bio, class: form_label_classes %>
+    <%= form.text_area :bio, rows: 4, class: form_input_classes(errors: profile.errors[:bio]), placeholder: "Tell others about your Ruby journey, experience, and what you can help with..." %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :years_experience, class: "block text-sm font-medium text-rose-400 mb-2" %>
+    <%= form.number_field :years_experience, class: ["block shadow-sm rounded-lg border px-3 py-2 w-full bg-zinc-700 text-white", {"border-zinc-600 focus:ring-rose-500 focus:border-rose-500": profile.errors[:years_experience].none?, "border-red-400 focus:ring-red-500 focus:border-red-500": profile.errors[:years_experience].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :timezone, class: "block text-sm font-medium text-rose-400 mb-2" %>
+    <%= form.time_zone_select :timezone, nil, { include_blank: "Select your timezone", default: Time.zone&.name }, class: ["block shadow-sm rounded-lg border px-3 py-2 w-full bg-zinc-700 text-white", {"border-zinc-600 focus:ring-rose-500 focus:border-rose-500": profile.errors[:timezone].none?, "border-red-400 focus:ring-red-500 focus:border-red-500": profile.errors[:timezone].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :skills, class: "block text-sm font-medium text-rose-400 mb-2" %>
+    <div class="mt-2" data-controller="tags">
+      <div data-tags-target="list" class="flex flex-wrap gap-2"></div>
+      <input type="text" data-tags-target="input" data-action="keydown->tags#keydown blur->tags#commit" placeholder="Type a skill and press Enter" class="mt-2 block w-full rounded-lg border border-zinc-600 px-3 py-2 shadow-sm bg-zinc-700 text-white focus:ring-rose-500 focus:border-rose-500" />
+      <%= form.hidden_field :skills, value: profile.skills, data: { tags_target: "hidden" } %>
+      <p class="mt-1 text-xs text-zinc-400">Examples: Rails, Postgres, Stimulus, Docker</p>
+    </div>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :availability, class: "block text-sm font-medium text-rose-400 mb-2" %>
+    <%= form.text_area :availability, rows: 4, class: ["block shadow-sm rounded-lg border px-3 py-2 w-full bg-zinc-700 text-white", {"border-zinc-600 focus:ring-rose-500 focus:border-rose-500": profile.errors[:availability].none?, "border-red-400 focus:ring-red-500 focus:border-red-500": profile.errors[:availability].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :github_url, class: "block text-sm font-medium text-rose-400 mb-2" %>
+    <%= form.text_field :github_url, class: ["block shadow-sm rounded-lg border px-3 py-2 w-full bg-zinc-700 text-white", {"border-zinc-600 focus:ring-rose-500 focus:border-rose-500": profile.errors[:github_url].none?, "border-red-400 focus:ring-red-500 focus:border-red-500": profile.errors[:github_url].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :x_url, class: "block text-sm font-medium text-rose-400 mb-2" %>
+    <%= form.text_field :x_url, class: ["block shadow-sm rounded-lg border px-3 py-2 w-full bg-zinc-700 text-white", {"border-zinc-600 focus:ring-rose-500 focus:border-rose-500": profile.errors[:x_url].none?, "border-red-400 focus:ring-red-500 focus:border-red-500": profile.errors[:x_url].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :website_url, class: "block text-sm font-medium text-rose-400 mb-2" %>
+    <%= form.text_field :website_url, class: ["block shadow-sm rounded-lg border px-3 py-2 w-full bg-zinc-700 text-white", {"border-zinc-600 focus:ring-rose-500 focus:border-rose-500": profile.errors[:website_url].none?, "border-red-400 focus:ring-red-500 focus:border-red-500": profile.errors[:website_url].any?}] %>
+  </div>
+
+  <div class="my-5 flex items-center gap-2">
+    <%= form.check_box :mentor, class: ["shadow-sm rounded border order-first h-5 w-5 text-rose-600 bg-zinc-700 border-zinc-600 focus:ring-rose-500", {"focus:ring-rose-500": profile.errors[:mentor].none?, "border-red-400 focus:ring-red-500": profile.errors[:mentor].any?}] %>
+    <%= form.label :mentor, class: "text-sm font-medium text-rose-400" %>
+  </div>
+
+  <div class="my-5 flex items-center gap-2">
+    <%= form.check_box :mentee, class: ["shadow-sm rounded border order-first h-5 w-5 text-rose-600 bg-zinc-700 border-zinc-600 focus:ring-rose-500", {"focus:ring-rose-500": profile.errors[:mentee].none?, "border-red-400 focus:ring-red-500": profile.errors[:mentee].any?}] %>
+    <%= form.label :mentee, class: "text-sm font-medium text-rose-400" %>
+  </div>
+
+  <div class="pt-4">
+    <%= form.submit "Save Profile", class: "w-full rounded-lg px-4 py-3 bg-rose-600 hover:bg-rose-700 text-white font-semibold transition-colors shadow-lg" %>
+  </div>
+<% end %>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  name: MyString
+  bio: MyText
+  years_experience: 1
+  timezone: MyString
+  skills: MyString
+  availability: MyText
+  github_url: MyString
+  x_url: MyString
+  website_url: MyString
+  mentor: false
+  mentee: false
+
+two:
+  user: two
+  name: MyString
+  bio: MyText
+  years_experience: 1
+  timezone: MyString
+  skills: MyString
+  availability: MyText
+  github_url: MyString
+  x_url: MyString
+  website_url: MyString
+  mentor: false
+  mentee: false
