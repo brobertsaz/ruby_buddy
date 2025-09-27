@@ -1,13 +1,24 @@
-<%= form_with(model: message, class: "contents") do |form| %>
-  <% if message.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
-      <h2><%= pluralize(message.errors.count, "error") %> prohibited this message from being saved:</h2>
+<%= form_with(model: message, class: "contents",
+    data: {
+      turbo_frame: "new_message",
+      action: "turbo:submit-start->chat-connection#handleMessageSending turbo:submit-end->chat-connection#handleMessageSent"
+    }) do |form| %>
 
-      <ul class="list-disc ml-6">
-        <% message.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+  <% if message.errors.any? %>
+    <div id="error_explanation" class="bg-red-50/80 backdrop-blur-sm text-red-600 px-4 py-3 font-medium rounded-lg mt-3 border border-red-200 animate-fade-in">
+      <div class="flex items-start space-x-2">
+        <svg class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg>
+        <div>
+          <h3 class="font-semibold text-sm"><%= pluralize(message.errors.count, "error") %> prohibited this message from being saved:</h3>
+          <ul class="list-disc ml-4 mt-2 text-sm">
+            <% message.errors.each do |error| %>
+              <li><%= error.full_message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
     </div>
   <% end %>
 
@@ -15,18 +26,102 @@
     <%= form.hidden_field :mentorship_request_id %>
   <% else %>
     <div class="my-5">
-      <%= form.label :mentorship_request_id %>
-      <%= form.number_field :mentorship_request_id, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": message.errors[:mentorship_request_id].none?, "border-red-400 focus:outline-red-600": message.errors[:mentorship_request_id].any?}] %>
+      <%= form.label :mentorship_request_id, class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.number_field :mentorship_request_id,
+          class: ["input-focus-ring block w-full rounded-lg border px-4 py-3 text-sm smooth-transition",
+                  {"border-gray-300 focus:border-blue-500 focus:ring-blue-500": message.errors[:mentorship_request_id].none?,
+                   "border-red-300 focus:border-red-500 focus:ring-red-500": message.errors[:mentorship_request_id].any?}] %>
     </div>
   <% end %>
 
+  <!-- Beautiful Message Input Area -->
+  <div class="relative">
+    <%= form.label :body, "Your message", class: "sr-only" %>
+    <%= form.text_area :body,
+        rows: 3,
+        placeholder: "Type your message here... Press Ctrl+Enter to send",
+        data: {
+          action: "keydown->messages#handleKeyDown input->typing-indicator#handleInput",
+          messages_target: "input"
+        },
+        class: ["input-focus-ring block w-full rounded-xl border px-4 py-3 text-sm smooth-transition resize-none",
+                "bg-white/80 backdrop-blur-sm placeholder:text-gray-400",
+                {"border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20": message.errors[:body].none?,
+                 "border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/20": message.errors[:body].any?}] %>
 
-  <div class="my-5">
-    <%= form.label :body %>
-    <%= form.text_area :body, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": message.errors[:body].none?, "border-red-400 focus:outline-red-600": message.errors[:body].any?}] %>
+    <!-- Character counter and quick actions -->
+    <div class="absolute bottom-2 right-2 flex items-center space-x-2">
+      <span class="character-counter text-xs text-gray-400"></span>
+      <div class="flex items-center space-x-1">
+        <!-- Emoji picker button (future enhancement) -->
+        <button type="button" class="text-gray-400 hover:text-gray-600 smooth-transition" title="Add emoji">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-.464 5.535a1 1 0 10-1.415-1.414 3 3 0 01-4.242 0 1 1 0 00-1.415 1.414 5 5 0 007.072 0z" clip-rule="evenodd" />
+          </svg>
+        </button>
+
+        <!-- File attachment button (future enhancement) -->
+        <button type="button" class="text-gray-400 hover:text-gray-600 smooth-transition" title="Attach file">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
 
-  <div class="inline">
-    <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  <!-- Enhanced Submit Button with Keyboard Shortcut -->
+  <div class="flex items-center justify-between mt-4">
+    <div class="flex items-center space-x-4 text-xs text-gray-500">
+      <span>💡 Tip: Press Ctrl+Enter to send</span>
+      <div class="typing-indicator-status" data-typing-indicator-target="userList"></div>
+    </div>
+
+    <div class="flex items-center space-x-2">
+      <!-- Send button -->
+      <%= form.submit "Send Message",
+          data: { messages_target: "submit" },
+          class: "btn-primary px-6 py-2.5 rounded-xl text-white font-medium smooth-transition inline-flex items-center space-x-2 shadow-lg hover:shadow-xl" %>
+    </div>
   </div>
 <% end %>
+
+<!-- Add JavaScript for enhanced form behavior -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Character counter
+    const textarea = document.querySelector('textarea[name="message[body]"]');
+    const counter = document.querySelector('.character-counter');
+
+    if (textarea && counter) {
+      textarea.addEventListener('input', function() {
+        const length = this.value.length;
+        counter.textContent = `${length}/1000`;
+
+        if (length > 800) {
+          counter.classList.add('text-amber-500');
+        } else if (length > 900) {
+          counter.classList.remove('text-amber-500');
+          counter.classList.add('text-red-500');
+        } else {
+          counter.classList.remove('text-amber-500', 'text-red-500');
+        }
+      });
+    }
+
+    // Ctrl+Enter to submit
+    textarea?.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        const form = this.closest('form');
+        form.querySelector('input[type="submit"]').click();
+      }
+    });
+
+    // Auto-resize textarea
+    textarea?.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+  });
+</script>

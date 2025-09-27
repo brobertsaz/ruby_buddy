@@ -10,9 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_16_005252) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_26_235509) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "conversation_metadata", force: :cascade do |t|
+    t.bigint "mentorship_request_id", null: false
+    t.bigint "user_id", null: false
+    t.boolean "typing", default: false, null: false
+    t.datetime "typing_updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["mentorship_request_id", "typing"], name: "index_conversation_metadata_on_request_and_typing"
+    t.index ["mentorship_request_id", "user_id"], name: "index_conversation_metadata_on_request_and_user", unique: true
+    t.index ["mentorship_request_id"], name: "index_conversation_metadata_on_mentorship_request_id"
+    t.index ["user_id"], name: "index_conversation_metadata_on_user_id"
+  end
 
   create_table "mentorship_requests", force: :cascade do |t|
     t.bigint "mentee_id", null: false
@@ -33,8 +46,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_005252) do
     t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "sent_at"
+    t.datetime "read_at"
+    t.index ["mentorship_request_id", "read_at"], name: "index_messages_on_request_and_read_status"
+    t.index ["mentorship_request_id", "user_id", "read_at"], name: "index_messages_for_unread_count"
     t.index ["mentorship_request_id"], name: "index_messages_on_mentorship_request_id"
+    t.index ["read_at"], name: "index_messages_on_read_at"
+    t.index ["sent_at"], name: "index_messages_on_sent_at"
     t.index ["user_id"], name: "index_messages_on_user_id"
+    t.check_constraint "read_at IS NULL OR read_at >= created_at", name: "check_read_at_after_created_at"
+    t.check_constraint "read_at IS NULL OR sent_at IS NULL OR read_at >= sent_at", name: "check_read_at_after_sent_at"
+    t.check_constraint "sent_at IS NULL OR sent_at >= created_at", name: "check_sent_at_after_created_at"
   end
 
   create_table "profiles", force: :cascade do |t|
@@ -63,10 +85,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_16_005252) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "role"
+    t.boolean "onboarding_completed", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["role"], name: "index_users_on_role"
   end
 
+  add_foreign_key "conversation_metadata", "mentorship_requests"
+  add_foreign_key "conversation_metadata", "users"
   add_foreign_key "mentorship_requests", "users", column: "mentee_id"
   add_foreign_key "mentorship_requests", "users", column: "mentor_id"
   add_foreign_key "messages", "mentorship_requests"

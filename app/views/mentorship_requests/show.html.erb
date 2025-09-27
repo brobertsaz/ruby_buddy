@@ -9,22 +9,86 @@
 
   <%= render @mentorship_request %>
 
-  <div class="mt-10">
-    <h2 class="text-2xl font-semibold mb-4">Conversation</h2>
-    <%= turbo_stream_from "mentorship_request_#{@mentorship_request.id}_messages" %>
-    <div id="<%= dom_id @mentorship_request, :messages %>" class="space-y-4">
-      <% @mentorship_request.messages.order(:created_at).each do |message| %>
-        <%= render message %>
-      <% end %>
+  <div class="mt-10"
+       data-controller="chat-connection typing-indicator message-status"
+       data-chat-connection-mentorship-request-id-value="<%= @mentorship_request.id %>"
+       data-chat-connection-current-user-id-value="<%= current_user&.id %>"
+       data-chat-connection-current-user-name-value="<%= current_user&.display_name %>"
+       data-typing-indicator-mentorship-request-id-value="<%= @mentorship_request.id %>"
+       data-typing-indicator-current-user-id-value="<%= current_user&.id %>"
+       data-typing-indicator-current-user-name-value="<%= current_user&.display_name %>"
+       data-message-status-current-user-id-value="<%= current_user&.id %>"
+       data-message-status-mentorship-request-id-value="<%= @mentorship_request.id %>">
+
+    <!-- Connection Status Indicator -->
+    <div data-chat-connection-target="connectionStatus" class="mb-4"></div>
+
+    <!-- Chat Header with beautiful gradient -->
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-xl p-4 border-b border-blue-100">
+      <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+        💬 Live Conversation
+      </h2>
+      <p class="text-sm text-gray-600 mt-1">Real-time chat with message status and typing indicators</p>
     </div>
 
-    <% if user_signed_in? && [@mentorship_request.mentee_id, @mentorship_request.mentor_id].compact.include?(current_user.id) %>
-      <div class="mt-6 p-4 border rounded-lg bg-white/60">
-        <%= render "messages/form", message: Message.new(mentorship_request: @mentorship_request) %>
+    <!-- Chat Container with beautiful styling -->
+    <div class="bg-white rounded-b-xl shadow-sm border border-gray-100 overflow-hidden">
+      <!-- Messages Container -->
+      <div class="chat-container h-96 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50/30 to-white"
+           data-message-status-target="messageList">
+        <%= turbo_stream_from "mentorship_request_#{@mentorship_request.id}_messages" %>
+        <div id="<%= dom_id @mentorship_request, :messages %>">
+          <% @mentorship_request.messages.order(:created_at).each do |message| %>
+            <div class="message-bubble <%= message.user == current_user ? 'animate-slide-in-right' : 'animate-slide-in-left' %>"
+                 data-message-status-target="message"
+                 data-message-id="<%= message.id %>"
+                 data-sender-id="<%= message.user_id %>"
+                 data-is-read="<%= message.read? %>"
+                 data-sent-at="<%= message.sent_at&.iso8601 %>"
+                 data-read-at="<%= message.read_at&.iso8601 %>">
+              <%= render message %>
+            </div>
+          <% end %>
+        </div>
       </div>
-    <% else %>
-      <p class="text-sm text-gray-500 mt-2">Sign in and be part of this request to post messages.</p>
-    <% end %>
+
+      <!-- Typing Indicator -->
+      <div data-typing-indicator-target="indicator"
+           class="typing-indicator-container px-4 py-2 border-t border-gray-100"></div>
+
+      <!-- Message Input Area -->
+      <% if user_signed_in? && [@mentorship_request.mentee_id, @mentorship_request.mentor_id].compact.include?(current_user.id) %>
+        <div class="p-4 bg-gradient-to-r from-gray-50 to-blue-50 border-t border-gray-100">
+          <div class="message-form-container"
+               data-typing-indicator-target="input"
+               data-action="input->typing-indicator#handleInput keydown->typing-indicator#handleKeydown">
+            <%= render "messages/form", message: Message.new(mentorship_request: @mentorship_request) %>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="flex items-center justify-between mt-3">
+            <div class="flex items-center space-x-2 text-xs text-gray-500">
+              <span class="typing-indicator-status"></span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button data-action="click->message-status#markAllRead"
+                      class="text-xs text-blue-600 hover:text-blue-700 font-medium smooth-transition">
+                Mark all as read
+              </button>
+              <button data-chat-connection-target="reconnectButton"
+                      data-action="click->chat-connection#reconnect"
+                      class="hidden text-xs bg-blue-600 text-white px-3 py-1 rounded-full hover:bg-blue-700 smooth-transition opacity-0 scale-95">
+                Reconnect
+              </button>
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <div class="p-4 text-center bg-gray-50 border-t border-gray-100">
+          <p class="text-sm text-gray-500">Sign in and be part of this request to post messages</p>
+        </div>
+      <% end %>
+    </div>
   </div>
 
   <div class="mt-8">

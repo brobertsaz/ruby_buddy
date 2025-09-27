@@ -1,0 +1,22 @@
+module ApplicationCable
+  class Connection < ActionCable::Connection::Base
+    identified_by :current_user
+
+    def connect
+      self.current_user = find_verified_user
+    end
+
+    private
+
+    def find_verified_user
+      # For WebSocket connections, we need to authenticate using session or token
+      # Since this is using Devise, we'll use the warden session
+
+      if verified_user = env['warden']&.user
+        verified_user
+      else
+        reject_unauthorized_connection
+      end
+    end
+  end
+end

@@ -19,6 +19,7 @@
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "chat_animations", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
@@ -32,12 +33,32 @@
           Pay It Forward
         </a>
         <nav class="flex items-center gap-4 text-sm">
-          <%= link_to "Mentors", profiles_path, class: "text-zinc-300 hover:text-rose-400 transition-colors" %>
           <% if user_signed_in? %>
-            <%= link_to "My Requests", mentorship_requests_path, class: "text-zinc-300 hover:text-rose-400 transition-colors" %>
-            <%= link_to "Dashboard", edit_profile_path(current_user.profile || Profile.new), class: "text-zinc-300 hover:text-rose-400 transition-colors" rescue nil %>
+            <% unless current_user.needs_onboarding? %>
+              <!-- Role-aware navigation -->
+              <% if current_user.mentor? %>
+                <%= link_to "Browse Requests", mentorship_requests_path, class: "text-zinc-300 hover:text-rose-400 transition-colors" %>
+              <% end %>
+
+              <% if current_user.mentee? %>
+                <%= link_to "Find Mentors", profiles_path, class: "text-zinc-300 hover:text-rose-400 transition-colors" %>
+              <% end %>
+
+              <%= link_to "My Dashboard", mentorship_requests_path, class: "text-zinc-300 hover:text-rose-400 transition-colors" %>
+
+              <% if current_user.mentor? %>
+                <%= link_to "My Profile", edit_profile_path(current_user.profile || Profile.new), class: "text-zinc-300 hover:text-rose-400 transition-colors" rescue nil %>
+              <% end %>
+
+              <!-- Role badge -->
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800">
+                <%= current_user.display_role %>
+              </span>
+            <% end %>
+
             <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "text-zinc-300 hover:text-rose-400 transition-colors border-0 bg-transparent p-0" %>
           <% else %>
+            <%= link_to "Find Mentors", profiles_path, class: "text-zinc-300 hover:text-rose-400 transition-colors" %>
             <%= link_to "Browse Requests", mentorship_requests_path, class: "text-zinc-300 hover:text-rose-400 transition-colors" %>
             <%= link_to "Sign in", new_user_session_path, class: "text-zinc-300 hover:text-rose-400 transition-colors" %>
             <%= link_to "Sign up", new_user_registration_path, class: "inline-flex items-center gap-1.5 rounded-lg bg-rose-600 px-3 py-1.5 text-white hover:bg-rose-700 transition-colors shadow-md" %>

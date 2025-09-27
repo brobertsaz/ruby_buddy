@@ -1,19 +1,74 @@
 <% mine = defined?(current_user) && message.user_id == current_user&.id %>
 <div class="w-full py-1 flex <%= mine ? 'justify-end' : 'justify-start' %>">
   <div class="flex items-end gap-2 max-w-[80%] <%= mine ? 'flex-row-reverse' : 'flex-row' %>">
-    <!-- Avatar -->
-    <div class="shrink-0">
-      <div class="h-8 w-8 rounded-full text-white grid place-items-center text-xs font-semibold <%= avatar_color_class(message.user) %>">
+    <!-- Avatar with online status -->
+    <div class="shrink-0 relative">
+      <div class="h-8 w-8 rounded-full text-white grid place-items-center text-xs font-semibold <%= avatar_color_class(message.user) %> smooth-transition scale-hover">
         <%= user_initials(message.user) %>
       </div>
+      <!-- Online status indicator -->
+      <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
     </div>
 
-    <!-- Bubble -->
-    <div id="<%= dom_id message %>" class="rounded-2xl px-3 py-2 text-sm shadow <%= mine ? 'bg-rose-600 text-white' : 'bg-white ring-1 ring-zinc-200 text-zinc-900' %>">
-      <div class="opacity-80 text-[11px] mb-0.5">
-        <%= display_name(message.user) %> · <%= time_ago_in_words(message.created_at) %> ago
+    <!-- Message Bubble with enhanced styling -->
+    <div id="<%= dom_id message %>"
+         class="message-bubble rounded-2xl px-4 py-3 text-sm shadow-sm smooth-transition
+                <%= mine ? 'message-bubble-sent bg-gradient-to-br from-blue-500 to-blue-600 text-white' : 'message-bubble-received bg-gradient-to-br from-white to-gray-50 ring-1 ring-gray-200 text-gray-900' %>">
+
+      <!-- Message Header -->
+      <div class="flex items-center justify-between mb-1">
+        <div class="opacity-80 text-[11px] font-medium <%= mine ? 'text-blue-100' : 'text-gray-500' %>">
+          <%= display_name(message.user) %>
+        </div>
+        <div class="message-timestamp opacity-0 text-[10px] <%= mine ? 'text-blue-200' : 'text-gray-400' %>">
+          <%= message.created_at.strftime("%H:%M") %>
+        </div>
       </div>
-      <div class="whitespace-pre-wrap leading-snug"><%= message.body %></div>
+
+      <!-- Message Content -->
+      <div class="whitespace-pre-wrap leading-relaxed mb-2 <%= mine ? 'text-white' : 'text-gray-900' %>">
+        <%= message.body %>
+      </div>
+
+      <!-- Message Status Indicator -->
+      <div class="flex items-center justify-between">
+        <div class="text-[10px] opacity-60 <%= mine ? 'text-blue-200' : 'text-gray-400' %>">
+          <%= time_ago_in_words(message.created_at) %> ago
+        </div>
+
+        <div data-message-status-target="status" class="message-status">
+          <% if mine %>
+            <!-- Show status for sent messages -->
+            <% if message.read? %>
+              <div class="flex items-center space-x-1">
+                <svg class="w-3 h-3 text-green-300" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span class="text-[9px] text-green-300 font-medium">Read</span>
+              </div>
+            <% elsif message.sent_at.present? %>
+              <div class="flex items-center space-x-1">
+                <svg class="w-3 h-3 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+                <span class="text-[9px] text-blue-300 font-medium">Sent</span>
+              </div>
+            <% else %>
+              <div class="flex items-center space-x-1">
+                <div class="loading-spinner w-3 h-3 border border-blue-300"></div>
+                <span class="text-[9px] text-blue-300 font-medium">Sending...</span>
+              </div>
+            <% end %>
+          <% else %>
+            <!-- Placeholder for received message status updates -->
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Message reactions placeholder (for future enhancement) -->
+      <div class="message-reactions mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <!-- Future: Add reaction buttons here -->
+      </div>
     </div>
   </div>
 </div>
