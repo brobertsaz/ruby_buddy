@@ -28,7 +28,7 @@ module ApplicationHelper
   end
 
   def button_primary(text, path = nil, **options)
-    classes = "inline-flex items-center gap-2 rounded-lg bg-rose-600 px-4 py-3 text-white font-semibold hover:bg-rose-700 transition-colors shadow-lg #{options[:class]}"
+    classes = "inline-flex items-center gap-2 rounded-lg bg-rose-600 px-4 py-3 text-white font-semibold hover:bg-rose-700 transition-colors shadow-lg btn-pulse-glow #{options[:class]}"
 
     if path
       link_to text, path, class: classes, **options.except(:class)
@@ -78,10 +78,17 @@ module ApplicationHelper
     content_tag :span, text, class: classes
   end
 
-  def empty_state(message, icon = "📭")
+  def empty_state(message, icon = nil)
+    # Supports Font Awesome icons via class string (e.g., "fa-regular fa-comments").
+    icon_html = if icon.to_s.include?("fa-")
+      content_tag(:i, "", class: icon)
+    else
+      content_tag(:i, "", class: "fa-regular fa-inbox")
+    end
+
     content_tag :div, class: "text-center my-12 py-8" do
-      content_tag(:div, icon, class: "text-4xl mb-4") +
-      content_tag(:p, message, class: "text-zinc-600 font-medium text-lg")
+      content_tag(:div, icon_html, class: "text-4xl mb-4") +
+      content_tag(:p, message, class: "text-zinc-400 font-medium text-lg")
     end
   end
 
@@ -91,4 +98,32 @@ module ApplicationHelper
       yield
     end
   end
+
+  # Form styling helpers (dark-first, with light variants kept for compatibility)
+  def form_input_classes(errors: [])
+    base = "block shadow-sm rounded-lg border px-3 py-2 w-full bg-zinc-700 text-white transition-colors"
+    if errors.any?
+      "#{base} border-red-400 focus:ring-red-500 focus:border-red-500"
+    else
+      "#{base} border-zinc-600 focus:ring-rose-500 focus:border-rose-500"
+    end
+  end
+
+  def form_label_classes
+    "block text-sm font-medium text-rose-400 mb-2"
+  end
+
+  def light_form_input_classes(errors: [])
+    base = "mt-1 block w-full rounded-lg border px-3 py-2 bg-white transition-colors"
+    if errors.any?
+      "#{base} border-red-400 focus:ring-red-500 focus:border-red-500"
+    else
+      "#{base} border-zinc-300 focus:ring-rose-500 focus:border-rose-500"
+    end
+  end
+
+  def light_form_label_classes
+    "block text-sm font-medium text-gray-700"
+  end
+
 end

@@ -1,0 +1,278 @@
+<% content_for :title, "My Dashboard" %>
+
+<%= section_container do %>
+  <!-- Welcome Header -->
+  <div class="mb-8">
+    <h1 class="text-4xl font-black text-zinc-100 mb-2">
+      <i class="fa-solid fa-gauge-high mr-2 text-rose-400"></i>
+      Welcome back, <%= current_user.display_name %>!
+    </h1>
+    <p class="text-zinc-400 text-lg">Here's what's happening with your mentorships</p>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+    <!-- Active Mentorships -->
+    <div class="glass-card rounded-xl p-6">
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-3xl"><i class="fa-solid fa-handshake text-green-400"></i></div>
+        <span class="text-3xl font-black text-zinc-100"><%= @active_mentorships.count %></span>
+      </div>
+      <p class="text-sm text-zinc-400 font-medium">Active Mentorships</p>
+    </div>
+
+    <!-- Unread Messages -->
+    <div class="glass-card rounded-xl p-6">
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-3xl"><i class="fa-solid fa-envelope text-blue-400"></i></div>
+        <span class="text-3xl font-black text-zinc-100"><%= @unread_messages_count %></span>
+      </div>
+      <p class="text-sm text-zinc-400 font-medium">Unread Messages</p>
+    </div>
+
+    <!-- My Requests -->
+    <div class="glass-card rounded-xl p-6">
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-3xl"><i class="fa-solid fa-clipboard-list text-purple-400"></i></div>
+        <span class="text-3xl font-black text-zinc-100"><%= @my_requests.count %></span>
+      </div>
+      <p class="text-sm text-zinc-400 font-medium">My Requests</p>
+    </div>
+
+    <!-- Pending (for mentors) -->
+    <% if current_user.mentor? %>
+      <div class="glass-card rounded-xl p-6">
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-3xl"><i class="fa-solid fa-clock text-yellow-400"></i></div>
+          <span class="text-3xl font-black text-zinc-100"><%= @pending_requests&.count || 0 %></span>
+        </div>
+        <p class="text-sm text-zinc-400 font-medium">Pending Requests</p>
+      </div>
+    <% else %>
+      <div class="glass-card rounded-xl p-6">
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-3xl"><i class="fa-solid fa-users text-rose-400"></i></div>
+          <span class="text-3xl font-black text-zinc-100"><%= Profile.where(mentor: true).count %></span>
+        </div>
+        <p class="text-sm text-zinc-400 font-medium">Available Mentors</p>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid lg:grid-cols-2 gap-6">
+    <!-- Left Column -->
+    <div class="space-y-6">
+      <!-- Pending Requests (for mentors) -->
+      <% if current_user.mentor? && @pending_requests.present? %>
+        <div class="glass-card rounded-xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold text-zinc-100 flex items-center gap-2">
+              <i class="fa-solid fa-bell text-yellow-400"></i>
+              Pending Requests
+            </h2>
+            <%= link_to "View All", mentorship_requests_path, class: "text-rose-400 hover:text-rose-300 text-sm font-semibold" %>
+          </div>
+          <div class="space-y-3">
+            <% @pending_requests.each do |request| %>
+              <div class="bg-zinc-800 rounded-lg p-4 border border-zinc-700 hover:border-rose-500/50 transition-colors">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="flex-1">
+                    <h3 class="font-bold text-zinc-100 mb-1"><%= request.topic %></h3>
+                    <p class="text-sm text-zinc-400">from <%= request.mentee.display_name %></p>
+                  </div>
+                  <%= link_to raw('<i class="fa-solid fa-eye"></i>'), request, class: "inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-600 text-white hover:bg-rose-700 transition-colors" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- My Requests (for mentees) -->
+      <% if @my_requests.present? %>
+        <div class="glass-card rounded-xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold text-zinc-100 flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-list text-blue-400"></i>
+              My Requests
+            </h2>
+            <%= link_to "View All", mentorship_requests_path, class: "text-rose-400 hover:text-rose-300 text-sm font-semibold" %>
+          </div>
+          <div class="space-y-3">
+            <% @my_requests.each do |request| %>
+              <div class="bg-zinc-800 rounded-lg p-4 border border-zinc-700 hover:border-rose-500/50 transition-colors">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="flex-1">
+                    <h3 class="font-bold text-zinc-100 mb-1"><%= request.topic %></h3>
+                    <div class="flex items-center gap-2 text-sm">
+                      <% if request.status == "open" %>
+                        <span class="inline-flex items-center rounded-full bg-yellow-500/10 text-yellow-300 px-2 py-0.5 text-xs font-bold ring-1 ring-yellow-500/30">
+                          <i class="fa-solid fa-clock mr-1"></i> Open
+                        </span>
+                      <% elsif request.status == "accepted" %>
+                        <span class="inline-flex items-center rounded-full bg-green-500/10 text-green-300 px-2 py-0.5 text-xs font-bold ring-1 ring-green-500/30">
+                          <i class="fa-solid fa-check mr-1"></i> Accepted
+                        </span>
+                      <% else %>
+                        <span class="inline-flex items-center rounded-full bg-zinc-700 text-zinc-400 px-2 py-0.5 text-xs font-bold">
+                          Closed
+                        </span>
+                      <% end %>
+                      <% if request.mentor.present? %>
+                        <span class="text-zinc-400">with <%= request.mentor.display_name %></span>
+                      <% end %>
+                    </div>
+                  </div>
+                  <%= link_to raw('<i class="fa-solid fa-eye"></i>'), request, class: "inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-600 text-white hover:bg-rose-700 transition-colors" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Right Column -->
+    <div class="space-y-6">
+      <!-- Active Mentorships -->
+      <% if @active_mentorships.present? %>
+        <div class="glass-card rounded-xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold text-zinc-100 flex items-center gap-2">
+              <i class="fa-solid fa-comments text-green-400"></i>
+              Active Conversations
+            </h2>
+          </div>
+          <div class="space-y-3">
+            <% @active_mentorships.each do |mentorship| %>
+              <div class="bg-zinc-800 rounded-lg p-4 border border-zinc-700 hover:border-rose-500/50 transition-colors">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="flex-1">
+                    <h3 class="font-bold text-zinc-100 mb-1"><%= mentorship.topic %></h3>
+                    <p class="text-sm text-zinc-400">
+                      <% if mentorship.mentee == current_user %>
+                        with <%= mentorship.mentor&.display_name || "mentor" %>
+                      <% else %>
+                        with <%= mentorship.mentee.display_name %>
+                      <% end %>
+                    </p>
+                    <% unread = mentorship.messages.where.not(user: current_user).where(read_at: nil).count %>
+                    <% if unread > 0 %>
+                      <span class="inline-flex items-center rounded-full bg-rose-500 text-white px-2 py-0.5 text-xs font-bold mt-2">
+                        <%= unread %> new <%= "message".pluralize(unread) %>
+                      </span>
+                    <% end %>
+                  </div>
+                  <%= link_to raw('<i class="fa-solid fa-message"></i>'), mentorship, class: "inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-600 text-white hover:bg-rose-700 transition-colors" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Quick Actions -->
+      <div class="glass-card rounded-xl p-6">
+        <h2 class="text-2xl font-bold text-zinc-100 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-bolt text-rose-400"></i>
+          Quick Actions
+        </h2>
+        <div class="space-y-2">
+          <% if current_user.mentee? %>
+            <%= link_to new_mentorship_request_path, class: "flex items-center gap-3 p-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-rose-500/50 transition-colors group" do %>
+              <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:bg-blue-500/20 transition-colors">
+                <i class="fa-solid fa-plus"></i>
+              </div>
+              <div class="flex-1">
+                <p class="font-semibold text-zinc-100">New Request</p>
+                <p class="text-xs text-zinc-400">Find a mentor</p>
+              </div>
+              <i class="fa-solid fa-arrow-right text-zinc-600 group-hover:text-rose-400 transition-colors"></i>
+            <% end %>
+          <% end %>
+
+          <% if current_user.mentee? %>
+            <%= link_to profiles_path, class: "flex items-center gap-3 p-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-rose-500/50 transition-colors group" do %>
+              <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 group-hover:bg-purple-500/20 transition-colors">
+                <i class="fa-solid fa-users"></i>
+              </div>
+              <div class="flex-1">
+                <p class="font-semibold text-zinc-100">Browse Mentors</p>
+                <p class="text-xs text-zinc-400">Find expertise</p>
+              </div>
+              <i class="fa-solid fa-arrow-right text-zinc-600 group-hover:text-rose-400 transition-colors"></i>
+            <% end %>
+          <% end %>
+
+          <% if current_user.mentor? %>
+            <%= link_to mentorship_requests_path, class: "flex items-center gap-3 p-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-rose-500/50 transition-colors group" do %>
+              <div class="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-400 group-hover:bg-yellow-500/20 transition-colors">
+                <i class="fa-solid fa-inbox"></i>
+              </div>
+              <div class="flex-1">
+                <p class="font-semibold text-zinc-100">View Requests</p>
+                <p class="text-xs text-zinc-400">See who needs help</p>
+              </div>
+              <i class="fa-solid fa-arrow-right text-zinc-600 group-hover:text-rose-400 transition-colors"></i>
+            <% end %>
+          <% end %>
+
+          <% if current_user.profile&.persisted? %>
+            <%= link_to edit_profile_path(current_user.profile), class: "flex items-center gap-3 p-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-rose-500/50 transition-colors group" do %>
+              <div class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400 group-hover:bg-green-500/20 transition-colors">
+                <i class="fa-solid fa-user-pen"></i>
+              </div>
+              <div class="flex-1">
+                <p class="font-semibold text-zinc-100">Edit Profile</p>
+                <p class="text-xs text-zinc-400">Update your info</p>
+              </div>
+              <i class="fa-solid fa-arrow-right text-zinc-600 group-hover:text-rose-400 transition-colors"></i>
+            <% end %>
+          <% elsif current_user.mentor? %>
+            <%= link_to new_profile_path, class: "flex items-center gap-3 p-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-rose-500/50 transition-colors group" do %>
+              <div class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400 group-hover:bg-green-500/20 transition-colors">
+                <i class="fa-solid fa-user-plus"></i>
+              </div>
+              <div class="flex-1">
+                <p class="font-semibold text-zinc-100">Create Profile</p>
+                <p class="text-xs text-zinc-400">Set up mentoring</p>
+              </div>
+              <i class="fa-solid fa-arrow-right text-zinc-600 group-hover:text-rose-400 transition-colors"></i>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <%
+    # Show CTA if:
+    # - Mentee with no requests and no active mentorships
+    # - Mentor with no profile, no pending requests, and no active mentorships
+    show_cta = @my_requests.empty? && @active_mentorships.empty? &&
+               (current_user.mentee? || (!current_user.profile&.persisted? && @pending_requests.empty?))
+  %>
+  <% if show_cta %>
+    <div class="glass-card rounded-xl p-12 text-center mt-8">
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-rose-500/10 mb-4">
+        <i class="fa-solid fa-rocket text-4xl text-rose-400"></i>
+      </div>
+      <h3 class="text-2xl font-bold text-zinc-100 mb-2">Ready to get started?</h3>
+      <p class="text-zinc-400 mb-6 max-w-md mx-auto">
+        <% if current_user.mentee? %>
+          Create your first mentorship request to connect with an experienced Ruby developer!
+        <% else %>
+          Set up your mentor profile and start helping others in the Ruby community!
+        <% end %>
+      </p>
+      <% if current_user.mentee? %>
+        <%= link_to raw('<i class="fa-solid fa-plus mr-2"></i> Create Request'), new_mentorship_request_path, class: "inline-flex items-center gap-2 rounded-lg bg-rose-600 px-6 py-3 text-white font-bold hover:bg-rose-700 transition-colors shadow-xl" %>
+      <% else %>
+        <%= link_to raw('<i class="fa-solid fa-user-plus mr-2"></i> Create Profile'), new_profile_path, class: "inline-flex items-center gap-2 rounded-lg bg-rose-600 px-6 py-3 text-white font-bold hover:bg-rose-700 transition-colors shadow-xl" %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
+

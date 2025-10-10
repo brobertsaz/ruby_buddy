@@ -1,0 +1,12 @@
+<div class="message-bubble animate-slide-in-up"
+     data-message-status-target="message"
+     data-message-id="<%= message.id %>"
+     data-sender-id="<%= message.user_id %>"
+     data-is-read="<%= message.read? %>"
+     data-sent-at="<%= message.sent_at&.iso8601 %>"
+     data-read-at="<%= message.read_at&.iso8601 %>"
+     data-controller="message-renderer"
+     data-action="turbo:before-stream-render@document->message-renderer#render">
+  <%= render partial: "messages/message_content", locals: { message: message } %>
+</div>
+

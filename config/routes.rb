@@ -5,9 +5,25 @@ Rails.application.routes.draw do
   post "onboarding/set_role"
   get "onboarding/complete"
 
+  # Dashboard
+  get "dashboard", to: "dashboard#index"
+
+  # Settings
+  get "settings", to: "settings#index"
+  patch "settings/update_role", to: "settings#update_role"
+  patch "settings/update_email", to: "settings#update_email"
+  patch "settings/update_password", to: "settings#update_password"
+
   get "home/index"
-  resources :messages
-  resources :mentorship_requests
+  # Messages are only created through mentorship requests, but we keep index for conversation list
+  resources :messages, only: [:index, :create, :destroy]
+  resources :mentorship_requests do
+    member do
+      post :accept
+      post :decline
+      post :close
+    end
+  end
   resources :profiles
   devise_for :users
 
@@ -16,12 +32,12 @@ Rails.application.routes.draw do
     # Message status endpoints
     resources :messages, only: [] do
       member do
-        post :mark_read
-        get :status
+        post :mark_read, to: 'message_status#mark_read'
+        get :status, to: 'message_status#status'
       end
       collection do
-        post :bulk_mark_read
-        post :typing
+        post :bulk_mark_read, to: 'message_status#bulk_mark_read'
+        post :typing, to: 'typing_indicator#update_for_message'
       end
     end
 

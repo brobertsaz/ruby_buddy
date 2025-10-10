@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Pay It Forward - Free Ruby Mentorship" %></title>
+    <title><%= content_for(:title) || "Ruby Pair - Free Ruby Mentorship" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -17,20 +17,23 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
+    <!-- Font Awesome (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" referrerpolicy="no-referrer" />
+
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "chat_animations", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-gradient-to-br from-zinc-50 to-zinc-100 text-zinc-900 min-h-screen">
+  <body class="bg-gradient-to-br from-zinc-950 to-zinc-900 text-zinc-200 min-h-screen bg-ruby-mesh bg-texture-dark">
     <%# Include shared UI components %>
     <%= render 'shared/ui_components' %>
-    <header class="fixed top-0 inset-x-0 z-50 backdrop-blur bg-zinc-900/95 border-b border-zinc-700">
+    <header class="fixed top-0 inset-x-0 z-50 backdrop-blur bg-zinc-900/95 border-b border-rose-900/20">
       <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <a href="/" class="flex items-center gap-2 font-semibold text-rose-400 hover:text-rose-300 transition-colors">
           <span class="inline-block w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-          Pay It Forward
+          Ruby Pair
         </a>
         <nav class="flex items-center gap-4 text-sm">
           <% if user_signed_in? %>
@@ -44,22 +47,57 @@
                 <%= link_to "Find Mentors", profiles_path, class: "text-zinc-300 hover:text-rose-400 transition-colors" %>
               <% end %>
 
-              <%= link_to "My Dashboard", mentorship_requests_path, class: "text-zinc-300 hover:text-rose-400 transition-colors" %>
+              <%= link_to "Dashboard", dashboard_path, class: "text-zinc-300 hover:text-rose-400 transition-colors" %>
 
-              <% if current_user.mentor? %>
-                <%= link_to "My Profile", edit_profile_path(current_user.profile || Profile.new), class: "text-zinc-300 hover:text-rose-400 transition-colors" rescue nil %>
-              <% end %>
+              <!-- User dropdown menu -->
+              <div class="relative" data-controller="dropdown">
+                <button type="button"
+                        data-action="click->dropdown#toggle"
+                        class="flex items-center gap-2 text-zinc-300 hover:text-rose-400 transition-colors">
+                  <span class="truncate max-w-[150px]"><%= current_user.email %></span>
+                  <i class="fa-solid fa-chevron-down text-xs"></i>
+                </button>
 
-              <!-- Role badge -->
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800">
-                <%= current_user.display_role %>
-              </span>
+                <!-- Dropdown menu -->
+                <div data-dropdown-target="menu"
+                     class="hidden absolute right-0 mt-2 w-56 rounded-xl bg-zinc-800 shadow-xl ring-1 ring-rose-500/20 overflow-hidden">
+                  <div class="px-4 py-3 border-b border-zinc-700">
+                    <p class="text-xs text-zinc-400">Signed in as</p>
+                    <p class="text-sm font-medium text-zinc-200 truncate"><%= current_user.email %></p>
+                    <span class="inline-flex items-center mt-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-rose-500/10 text-rose-300 ring-1 ring-inset ring-rose-500/30">
+                      <%= current_user.display_role %>
+                    </span>
+                  </div>
+
+                  <div class="py-1">
+                    <% if current_user.profile&.persisted? %>
+                      <%= link_to edit_profile_path(current_user.profile), class: "flex items-center gap-3 px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-700 hover:text-rose-400 transition-colors" do %>
+                        <i class="fa-solid fa-user w-4"></i>
+                        <span>My Profile</span>
+                      <% end %>
+                    <% elsif current_user.mentor? %>
+                      <%= link_to new_profile_path, class: "flex items-center gap-3 px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-700 hover:text-rose-400 transition-colors" do %>
+                        <i class="fa-solid fa-user-plus w-4"></i>
+                        <span>Create Profile</span>
+                      <% end %>
+                    <% end %>
+
+                    <%= link_to settings_path, class: "flex items-center gap-3 px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-700 hover:text-rose-400 transition-colors" do %>
+                      <i class="fa-solid fa-gear w-4"></i>
+                      <span>Settings</span>
+                    <% end %>
+                  </div>
+
+                  <div class="border-t border-zinc-700 py-1">
+                    <%= button_to destroy_user_session_path, method: :delete, class: "w-full flex items-center gap-3 px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-700 hover:text-rose-400 transition-colors text-left", data: { turbo: false } do %>
+                      <i class="fa-solid fa-arrow-right-from-bracket w-4"></i>
+                      <span>Sign out</span>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
             <% end %>
-
-            <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "text-zinc-300 hover:text-rose-400 transition-colors border-0 bg-transparent p-0" %>
           <% else %>
-            <%= link_to "Find Mentors", profiles_path, class: "text-zinc-300 hover:text-rose-400 transition-colors" %>
-            <%= link_to "Browse Requests", mentorship_requests_path, class: "text-zinc-300 hover:text-rose-400 transition-colors" %>
             <%= link_to "Sign in", new_user_session_path, class: "text-zinc-300 hover:text-rose-400 transition-colors" %>
             <%= link_to "Sign up", new_user_registration_path, class: "inline-flex items-center gap-1.5 rounded-lg bg-rose-600 px-3 py-1.5 text-white hover:bg-rose-700 transition-colors shadow-md" %>
           <% end %>
@@ -70,17 +108,17 @@
     <%# Flash messages container with consistent styling %>
     <div class="max-w-6xl mx-auto px-4 pt-24 pb-2">
       <% if notice %>
-        <div class="mb-6 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 text-green-800 border-2 border-green-200 px-4 py-3 shadow-sm backdrop-blur">
+        <div class="mb-6 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 px-4 py-3 shadow-sm">
           <div class="flex items-center gap-2">
-            <span class="text-green-600">🎉</span>
+            <i class="fa-solid fa-circle-check text-green-500"></i>
             <span class="font-medium"><%= notice %></span>
           </div>
         </div>
       <% end %>
       <% if alert %>
-        <div class="mb-6 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 text-red-800 border-2 border-red-200 px-4 py-3 shadow-sm backdrop-blur">
+        <div class="mb-6 rounded-xl bg-rose-500/10 text-rose-300 border border-rose-500/30 px-4 py-3 shadow-sm">
           <div class="flex items-center gap-2">
-            <span class="text-red-600">⚠️</span>
+            <i class="fa-solid fa-triangle-exclamation text-red-500"></i>
             <span class="font-medium"><%= alert %></span>
           </div>
         </div>
@@ -90,5 +128,22 @@
     <main class="max-w-6xl mx-auto px-4 pb-12">
       <%= yield %>
     </main>
+
+    <%# Footer %>
+    <footer class="border-t border-rose-900/20 mt-16">
+      <div class="max-w-6xl mx-auto px-4 py-8">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p class="text-zinc-400 text-sm font-medium">
+            © <%= Time.current.year %> Ruby Pair. Free mentorship for the Ruby community.
+          </p>
+          <div class="flex items-center gap-3 glass-item rounded-full px-4 py-2">
+            <span class="text-zinc-400 text-sm font-medium">Built with</span>
+            <%= image_tag "ruby-logo.svg", alt: "Ruby", class: "w-6 h-6", title: "Ruby" %>
+            <span class="text-zinc-500">+</span>
+            <%= image_tag "rails-logo.svg", alt: "Rails", class: "w-6 h-6", title: "Ruby on Rails" %>
+          </div>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

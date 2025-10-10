@@ -3,8 +3,8 @@
 <%= section_container do %>
   <%# Page Header %>
   <div class="mb-8">
-    <h1 class="text-4xl font-black tracking-tight text-zinc-900 text-center">✏️ Edit Request</h1>
-    <p class="text-zinc-700 font-medium text-lg mt-2 text-center">Update your mentorship request details</p>
+    <h1 class="text-4xl font-black tracking-tight text-zinc-100 text-center"><i class="fa-solid fa-pen-to-square mr-2"></i> Edit Request</h1>
+    <p class="text-zinc-400 font-medium text-lg mt-2 text-center">Update your mentorship request details</p>
   </div>
 
   <%# Form %>
@@ -12,7 +12,7 @@
 
   <%# Navigation %>
   <div class="max-w-2xl mx-auto mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-    <%= button_secondary "👀 View Request", @mentorship_request %>
-    <%= button_secondary "← Back to Requests", mentorship_requests_path %>
+    <%= button_secondary raw('<i class="fa-solid fa-eye mr-2"></i> View Request'), @mentorship_request %>
+    <%= button_secondary raw('<i class="fa-solid fa-arrow-left mr-2"></i> Back to Requests'), mentorship_requests_path %>
   </div>
 <% end %>

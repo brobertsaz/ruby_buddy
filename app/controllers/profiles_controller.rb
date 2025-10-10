@@ -31,6 +31,7 @@ class ProfilesController < ApplicationController
 
     respond_to do |format|
       if @profile.save
+        current_user.update(onboarding_completed: true) if current_user.role.present? && !current_user.onboarding_completed?
         format.html { redirect_to @profile, notice: "Profile was successfully created." }
         format.json { render :show, status: :created, location: @profile }
       else

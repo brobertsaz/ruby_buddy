@@ -4,9 +4,11 @@ class MessagesController < ApplicationController
 
   # GET /messages or /messages.json
   def index
-    @messages = Message.joins(:mentorship_request)
-                       .where("mentorship_requests.mentee_id = ? OR mentorship_requests.mentor_id = ?", current_user.id, current_user.id)
-                       .order(created_at: :asc)
+    # Get all mentorship requests where the user is involved
+    @conversations = MentorshipRequest
+                       .where("mentee_id = ? OR mentor_id = ?", current_user.id, current_user.id)
+                       .includes(:messages, :mentee, :mentor)
+                       .order("mentorship_requests.updated_at DESC")
   end
 
   # GET /messages/1 or /messages/1.json
@@ -29,10 +31,25 @@ class MessagesController < ApplicationController
 
     respond_to do |format|
       if @message.save
-        format.turbo_stream { head :ok }
+        # Set sent_at after save to ensure it's after created_at
+        @message.update_column(:sent_at, Time.current)
+
+        # Broadcast to ALL users viewing this conversation
+        # The broadcast will handle showing the message to everyone
+        broadcast_message
+
+        # Clear the form for the sender
+        format.turbo_stream {
+          render turbo_stream: turbo_stream.replace(
+            "new_message",
+            partial: "messages/form",
+            locals: { message: Message.new(mentorship_request: @message.mentorship_request) }
+          )
+        }
         format.html { redirect_to @message.mentorship_request, notice: "Message posted." }
         format.json { render :show, status: :created, location: @message }
       else
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("new_message", partial: "messages/form", locals: { message: @message }) }
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @message.errors, status: :unprocessable_entity }
       end
@@ -71,5 +88,15 @@ class MessagesController < ApplicationController
     # Only allow a list of trusted parameters through.
     def message_params
       params.expect(message: [ :mentorship_request_id, :body ])
+    end
+
+    # Broadcast message to all users viewing this conversation
+    def broadcast_message
+      Turbo::StreamsChannel.broadcast_append_to(
+        "mentorship_request_#{@message.mentorship_request_id}_messages",
+        target: "mentorship_request_#{@message.mentorship_request_id}_messages",
+        partial: "messages/message_broadcast",
+        locals: { message: @message }
+      )
     end
 end

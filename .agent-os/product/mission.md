@@ -2,7 +2,7 @@
 
 ## Pitch
 
-Ruby Buddy is a free mentorship platform that helps beginner and junior Ruby developers connect with experienced Ruby professionals by providing a structured mentorship system that costs nothing for either party.
+Ruby Pair is a free mentorship platform that helps beginner and junior Ruby developers connect with experienced Ruby professionals by providing a structured mentorship system that costs nothing for either party.
 
 ## Users
 
@@ -38,33 +38,33 @@ Ruby Buddy is a free mentorship platform that helps beginner and junior Ruby dev
 
 Many Ruby beginners and junior developers struggle to find experienced mentors willing to provide free guidance. Traditional mentorship often requires personal connections or expensive paid programs. This creates a barrier for newcomers who need support the most.
 
-**Our Solution:** Ruby Buddy connects willing Ruby professionals with learners at no cost to anyone, democratizing access to mentorship.
+**Our Solution:** Ruby Pair connects willing Ruby professionals with learners at no cost to anyone, democratizing access to mentorship.
 
 ### Unstructured Mentorship Experiences
 
 Informal mentorship arrangements often lack structure, clear expectations, and proper communication channels. This leads to inconsistent experiences and dropped connections.
 
-**Our Solution:** Ruby Buddy provides a structured platform with mentorship requests, goal tracking, and integrated communication tools.
+**Our Solution:** Ruby Pair provides a structured platform with mentorship requests, goal tracking, and integrated communication tools.
 
 ### Ruby Community Fragmentation
 
 While the Ruby community is known for being welcoming, there's no centralized place for mentorship connections, leading to missed opportunities for knowledge transfer.
 
-**Our Solution:** Ruby Buddy creates a dedicated space for Ruby mentorship, strengthening community bonds and knowledge sharing.
+**Our Solution:** Ruby Pair creates a dedicated space for Ruby mentorship, strengthening community bonds and knowledge sharing.
 
 ## Differentiators
 
 ### Completely Free for All Users
 
-Unlike paid mentorship platforms or coaching services, Ruby Buddy is entirely free for both mentors and mentees. This removes financial barriers and emphasizes the community-driven nature of Ruby development.
+Unlike paid mentorship platforms or coaching services, Ruby Pair is entirely free for both mentors and mentees. This removes financial barriers and emphasizes the community-driven nature of Ruby development.
 
 ### Ruby-Specific Focus
 
-While general mentorship platforms exist, Ruby Buddy is specifically designed for the Ruby ecosystem, understanding the unique needs, tools, and culture of Ruby developers. This results in more relevant matches and conversations.
+While general mentorship platforms exist, Ruby Pair is specifically designed for the Ruby ecosystem, understanding the unique needs, tools, and culture of Ruby developers. This results in more relevant matches and conversations.
 
 ### Structured Yet Flexible System
 
-Unlike informal mentorship that often lacks structure, Ruby Buddy provides organized mentorship requests, goal tracking, and communication tools while maintaining the flexibility for personalized mentoring approaches.
+Unlike informal mentorship that often lacks structure, Ruby Pair provides organized mentorship requests, goal tracking, and communication tools while maintaining the flexibility for personalized mentoring approaches.
 
 ## Key Features
 

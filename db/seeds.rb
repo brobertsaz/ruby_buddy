@@ -1,8 +1,8 @@
-# Ruby Buddy - Seed Data
+# Ruby Pair - Seed Data
 # Creates sample users, mentors, mentorship requests, and chat conversations
 # to showcase the beautiful chat interface and onboarding flow
 
-puts "🌱 Seeding Ruby Buddy with amazing data..."
+puts "🌱 Seeding Ruby Pair with amazing data..."
 
 # Clear existing data in development
 if Rails.env.development?
@@ -32,7 +32,7 @@ mentors_data = [
     email: "alex.senior@rubygems.org",
     name: "Alex Rodriguez",
     role: "mentor",
-    bio: "Full-stack developer and open source contributor. Been writing Ruby since 2015 and love sharing knowledge through mentorship! 💎",
+    bio: "Full-stack developer and open source contributor. Been writing Ruby since 2015 and love sharing knowledge through mentorship!",
     skills: ["Ruby", "JavaScript", "Docker", "AWS", "GraphQL"],
     github: "alexr-dev",
     experience: "9 years"
@@ -262,24 +262,24 @@ requests_data = [
   }
 ]
 
-# Create some open requests too
+# Create some open requests too - requests from the community looking for your expertise!
 open_requests_data = [
   {
     mentee: created_users["emma.career@switcher.com"],
     topic: "Ruby Gem Development",
-    description: "I want to learn how to create and publish my first Ruby gem. Looking for someone who has experience with gem development, testing gems, and the publishing process.",
+    description: "I want to learn how to create and publish my first Ruby gem. Looking for someone who has experience with gem development, testing gems, and the publishing process. Your expertise would be invaluable!",
     status: :open
   },
   {
     mentee: created_users["carlos.junior@bootcamp.edu"],
     topic: "GraphQL with Ruby",
-    description: "My company is considering GraphQL for our API. I have REST experience but need help understanding GraphQL concepts and how to implement it in Ruby/Rails.",
+    description: "My company is considering GraphQL for our API. I have REST experience but need help understanding GraphQL concepts and how to implement it in Ruby/Rails. The community is looking for your expertise on this!",
     status: :open
   },
   {
     mentee: created_users["david.intern@company.com"],
     topic: "Ruby Performance Optimization",
-    description: "Working on a high-traffic Rails app that's having performance issues. Need guidance on profiling, optimization techniques, and scaling Ruby applications.",
+    description: "Working on a high-traffic Rails app that's having performance issues. Need guidance on profiling, optimization techniques, and scaling Ruby applications. Requests from the community looking for your expertise!",
     status: :open
   }
 ]

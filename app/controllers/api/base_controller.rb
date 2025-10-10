@@ -26,7 +26,9 @@ class Api::BaseController < ApplicationController
   end
 
   # Override Devise's unauthenticated response for API
-  def unauthenticated_api_response
-    render_unauthorized
+  def authenticate_user!
+    unless user_signed_in?
+      render_unauthorized
+    end
   end
 end

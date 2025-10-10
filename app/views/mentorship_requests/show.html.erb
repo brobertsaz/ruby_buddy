@@ -1,15 +1,84 @@
-<% content_for :title, "Showing mentorship request" %>
+<% content_for :title, @mentorship_request.topic %>
 
-<div class="md:w-2/3 w-full">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
-  <% end %>
+<%= section_container do %>
+  <!-- Header with Status -->
+  <div class="glass-card rounded-2xl p-6 mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4 mb-4">
+      <div class="flex-1">
+        <div class="flex items-center gap-3 mb-3">
+          <h1 class="text-3xl font-black text-zinc-100"><%= @mentorship_request.topic %></h1>
+          <% if @mentorship_request.status == "open" %>
+            <span class="inline-flex items-center rounded-full bg-yellow-500/10 text-yellow-300 px-3 py-1 text-sm font-bold ring-1 ring-yellow-500/30">
+              <i class="fa-solid fa-clock mr-1"></i> Open
+            </span>
+          <% elsif @mentorship_request.status == "accepted" %>
+            <span class="inline-flex items-center rounded-full bg-green-500/10 text-green-300 px-3 py-1 text-sm font-bold ring-1 ring-green-500/30">
+              <i class="fa-solid fa-check mr-1"></i> Accepted
+            </span>
+          <% else %>
+            <span class="inline-flex items-center rounded-full bg-zinc-700 text-zinc-400 px-3 py-1 text-sm font-bold">
+              <i class="fa-solid fa-lock mr-1"></i> Closed
+            </span>
+          <% end %>
+        </div>
 
-  <h1 class="font-bold text-4xl">Showing mentorship request</h1>
+        <div class="flex flex-wrap gap-4 text-zinc-400">
+          <span class="inline-flex items-center gap-1">
+            <i class="fa-solid fa-user text-rose-400"></i>
+            <strong class="text-zinc-300">Mentee:</strong> <%= @mentorship_request.mentee.display_name %>
+          </span>
+          <% if @mentorship_request.mentor.present? %>
+            <span class="inline-flex items-center gap-1">
+              <i class="fa-solid fa-star text-rose-400"></i>
+              <strong class="text-zinc-300">Mentor:</strong> <%= @mentorship_request.mentor.display_name %>
+            </span>
+          <% else %>
+            <span class="inline-flex items-center gap-1 text-zinc-500">
+              <i class="fa-solid fa-hourglass-half"></i>
+              Waiting for mentor
+            </span>
+          <% end %>
+        </div>
+      </div>
 
-  <%= render @mentorship_request %>
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap gap-2">
+        <% if user_signed_in? %>
+          <% if @mentorship_request.mentor_id == current_user.id && @mentorship_request.status == "open" %>
+            <%= button_to raw('<i class="fa-solid fa-check mr-2"></i> Accept'), accept_mentorship_request_path(@mentorship_request), method: :post, class: "inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white font-semibold hover:bg-green-700 transition-colors shadow-lg" %>
+            <%= button_to raw('<i class="fa-solid fa-times mr-2"></i> Decline'), decline_mentorship_request_path(@mentorship_request), method: :post, class: "inline-flex items-center gap-2 rounded-lg bg-zinc-700 px-4 py-2 text-white font-semibold hover:bg-zinc-600 transition-colors", data: { turbo_confirm: "Are you sure you want to decline this request?" } %>
+          <% end %>
 
-  <div class="mt-10"
+          <% if (@mentorship_request.mentee_id == current_user.id || @mentorship_request.mentor_id == current_user.id) && @mentorship_request.status != "closed" %>
+            <%= button_to raw('<i class="fa-solid fa-lock mr-2"></i> Close Request'), close_mentorship_request_path(@mentorship_request), method: :post, class: "inline-flex items-center gap-2 rounded-lg bg-zinc-700 px-4 py-2 text-white font-semibold hover:bg-zinc-600 transition-colors", data: { turbo_confirm: "Are you sure you want to close this mentorship?" } %>
+          <% end %>
+
+          <% if @mentorship_request.mentee_id == current_user.id %>
+            <%= link_to raw('<i class="fa-solid fa-pen mr-2"></i> Edit'), edit_mentorship_request_path(@mentorship_request), class: "inline-flex items-center gap-2 rounded-lg bg-zinc-700 px-4 py-2 text-white font-semibold border border-zinc-600 hover:bg-zinc-600 transition-colors" %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Goals & Details -->
+    <% if @mentorship_request.goals.present? %>
+      <div class="mt-4 pt-4 border-t border-zinc-700">
+        <h3 class="text-sm font-bold text-rose-400 mb-2">Goals</h3>
+        <p class="text-zinc-300 leading-relaxed"><%= simple_format(@mentorship_request.goals) %></p>
+      </div>
+    <% end %>
+
+    <% if @mentorship_request.preferred_times.present? %>
+      <div class="mt-4 pt-4 border-t border-zinc-700">
+        <h3 class="text-sm font-bold text-rose-400 mb-2">Preferred Times</h3>
+        <p class="text-zinc-300"><%= @mentorship_request.preferred_times %></p>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Chat Section -->
+  <!-- Chat Section -->
+  <div class="glass-card rounded-xl overflow-hidden"
        data-controller="chat-connection typing-indicator message-status"
        data-chat-connection-mentorship-request-id-value="<%= @mentorship_request.id %>"
        data-chat-connection-current-user-id-value="<%= current_user&.id %>"
@@ -21,23 +90,25 @@
        data-message-status-mentorship-request-id-value="<%= @mentorship_request.id %>">
 
     <!-- Connection Status Indicator -->
-    <div data-chat-connection-target="connectionStatus" class="mb-4"></div>
+    <div data-chat-connection-target="connectionStatus" class="px-6 pt-4"></div>
 
-    <!-- Chat Header with beautiful gradient -->
-    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-xl p-4 border-b border-blue-100">
-      <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-        💬 Live Conversation
+    <!-- Chat Header -->
+    <div class="bg-gradient-to-r from-zinc-800/50 to-zinc-900/50 p-6 border-b border-zinc-700">
+      <h2 class="text-2xl font-bold text-zinc-100 flex items-center gap-2">
+        <i class="fa-solid fa-comments text-rose-400"></i>
+        Live Conversation
       </h2>
-      <p class="text-sm text-gray-600 mt-1">Real-time chat with message status and typing indicators</p>
+      <p class="text-sm text-zinc-400 mt-1">Real-time chat with message status and typing indicators</p>
     </div>
 
     <!-- Chat Container with beautiful styling -->
-    <div class="bg-white rounded-b-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-zinc-900 rounded-b-xl shadow-sm border border-zinc-700 overflow-hidden">
       <!-- Messages Container -->
-      <div class="chat-container h-96 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50/30 to-white"
+      <div class="chat-container h-96 overflow-y-auto p-4 space-y-4 bg-zinc-900"
+           data-chat-connection-target="messageList"
            data-message-status-target="messageList">
         <%= turbo_stream_from "mentorship_request_#{@mentorship_request.id}_messages" %>
-        <div id="<%= dom_id @mentorship_request, :messages %>">
+        <div id="mentorship_request_<%= @mentorship_request.id %>_messages">
           <% @mentorship_request.messages.order(:created_at).each do |message| %>
             <div class="message-bubble <%= message.user == current_user ? 'animate-slide-in-right' : 'animate-slide-in-left' %>"
                  data-message-status-target="message"
@@ -54,16 +125,18 @@
 
       <!-- Typing Indicator -->
       <div data-typing-indicator-target="indicator"
-           class="typing-indicator-container px-4 py-2 border-t border-gray-100"></div>
+           class="typing-indicator-container px-4 py-2 border-t border-zinc-800"></div>
 
       <!-- Message Input Area -->
       <% if user_signed_in? && [@mentorship_request.mentee_id, @mentorship_request.mentor_id].compact.include?(current_user.id) %>
-        <div class="p-4 bg-gradient-to-r from-gray-50 to-blue-50 border-t border-gray-100">
-          <div class="message-form-container"
-               data-typing-indicator-target="input"
-               data-action="input->typing-indicator#handleInput keydown->typing-indicator#handleKeydown">
-            <%= render "messages/form", message: Message.new(mentorship_request: @mentorship_request) %>
-          </div>
+        <div class="p-4 bg-zinc-900 border-t border-zinc-800">
+          <%= turbo_frame_tag "new_message" do %>
+            <div class="message-form-container"
+                 data-typing-indicator-target="input"
+                 data-action="input->typing-indicator#handleInput keydown->typing-indicator#handleKeydown">
+              <%= render "messages/form", message: Message.new(mentorship_request: @mentorship_request) %>
+            </div>
+          <% end %>
 
           <!-- Quick Actions -->
           <div class="flex items-center justify-between mt-3">
@@ -72,7 +145,7 @@
             </div>
             <div class="flex items-center space-x-2">
               <button data-action="click->message-status#markAllRead"
-                      class="text-xs text-blue-600 hover:text-blue-700 font-medium smooth-transition">
+                      class="text-xs text-rose-400 hover:text-rose-300 font-medium smooth-transition">
                 Mark all as read
               </button>
               <button data-chat-connection-target="reconnectButton"
@@ -84,16 +157,18 @@
           </div>
         </div>
       <% else %>
-        <div class="p-4 text-center bg-gray-50 border-t border-gray-100">
-          <p class="text-sm text-gray-500">Sign in and be part of this request to post messages</p>
+        <div class="p-4 text-center bg-zinc-900 border-t border-zinc-800">
+          <p class="text-sm text-zinc-500">Sign in and be part of this request to post messages</p>
         </div>
       <% end %>
     </div>
   </div>
 
+  <!-- Back Button -->
   <div class="mt-8">
-    <%= link_to "Edit this mentorship request", edit_mentorship_request_path(@mentorship_request), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-    <%= link_to "Back to mentorship requests", mentorship_requests_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-    <%= button_to "Destroy this mentorship request", @mentorship_request, method: :delete, form_class: "sm:inline-block mt-2 sm:mt-0 sm:ml-2", class: "w-full rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
+    <%= link_to raw('<i class="fa-solid fa-arrow-left mr-2"></i> Back to Dashboard'), dashboard_path, class: "inline-flex items-center gap-2 rounded-lg bg-zinc-700 px-4 py-2 text-white font-semibold border border-zinc-600 hover:bg-zinc-600 transition-colors" %>
+    <% if @mentorship_request.mentee_id == current_user.id %>
+      <%= button_to raw('<i class="fa-solid fa-trash mr-2"></i> Delete Request'), @mentorship_request, method: :delete, class: "inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-white font-semibold hover:bg-red-700 transition-colors ml-2", data: { turbo_confirm: "Are you sure you want to delete this request? This cannot be undone." } %>
+    <% end %>
   </div>
-</div>
+<% end %>

@@ -3,36 +3,36 @@
 <div class="max-w-5xl mx-auto">
   <!-- Header -->
   <div class="text-center mb-12">
-    <h1 class="text-4xl font-black text-gray-900 mb-4">
+    <h1 class="text-4xl font-black text-zinc-100 mb-4">
       How would you like to participate?
     </h1>
-    <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+    <p class="text-xl text-zinc-400 max-w-2xl mx-auto">
       Choose the path that best describes your journey with Ruby development.
       Don't worry—you can always change this later!
     </p>
   </div>
 
   <!-- Role Selection Cards -->
-  <%= form_with url: onboarding_set_role_path, method: :post, local: true, class: "space-y-6" do |form| %>
+  <%= form_with scope: :user, url: onboarding_set_role_path, method: :post, local: true, class: "space-y-6" do |form| %>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
       <!-- Mentee Option -->
       <label class="role-card group cursor-pointer">
-        <%= form.radio_button :role, "mentee", class: "sr-only role-radio" %>
-        <div class="bg-white border-2 border-gray-200 rounded-2xl p-8 transition-all duration-200 group-hover:border-blue-400 group-hover:shadow-lg group-hover:scale-105 h-full flex flex-col">
+        <%= form.radio_button :role, "mentee", class: "sr-only role-radio peer" %>
+        <div class="bg-zinc-900 border-2 border-zinc-700 rounded-2xl p-8 transition-all duration-200 group-hover:border-blue-400 group-hover:shadow-lg group-hover:scale-105 h-full flex flex-col peer-checked:ring-2 peer-checked:ring-blue-500/50">
 
           <!-- Icon -->
           <div class="text-center mb-6">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full mb-4">
-              <span class="text-3xl">🎯</span>
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-full mb-4">
+              <span class="text-3xl"><i class="fa-solid fa-bullseye"></i></span>
             </div>
-            <h3 class="text-2xl font-bold text-gray-900">I'm Learning</h3>
-            <p class="text-blue-600 font-medium">Looking for a Mentor</p>
+            <h3 class="text-2xl font-bold text-zinc-100">I'm Learning</h3>
+            <p class="text-blue-400 font-medium">Looking for a Mentor</p>
           </div>
 
           <!-- Description -->
           <div class="flex-1">
-            <ul class="space-y-3 text-gray-600">
+            <ul class="space-y-3 text-zinc-300">
               <li class="flex items-start space-x-2">
                 <svg class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -55,29 +55,29 @@
           </div>
 
           <!-- What happens next -->
-          <div class="mt-6 pt-6 border-t border-gray-100">
-            <p class="text-sm text-gray-500 font-medium">Next: Create your mentorship request</p>
+          <div class="mt-6 pt-6 border-t border-zinc-800">
+            <p class="text-sm text-zinc-400 font-medium">Next: Create your mentorship request</p>
           </div>
         </div>
       </label>
 
       <!-- Mentor Option -->
       <label class="role-card group cursor-pointer">
-        <%= form.radio_button :role, "mentor", class: "sr-only role-radio" %>
-        <div class="bg-white border-2 border-gray-200 rounded-2xl p-8 transition-all duration-200 group-hover:border-green-400 group-hover:shadow-lg group-hover:scale-105 h-full flex flex-col">
+        <%= form.radio_button :role, "mentor", class: "sr-only role-radio peer" %>
+        <div class="bg-zinc-900 border-2 border-zinc-700 rounded-2xl p-8 transition-all duration-200 group-hover:border-green-400 group-hover:shadow-lg group-hover:scale-105 h-full flex flex-col peer-checked:ring-2 peer-checked:ring-green-500/50">
 
           <!-- Icon -->
           <div class="text-center mb-6">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full mb-4">
-              <span class="text-3xl">🌟</span>
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-full mb-4">
+              <span class="text-3xl"><i class="fa-solid fa-star"></i></span>
             </div>
-            <h3 class="text-2xl font-bold text-gray-900">I Can Help</h3>
-            <p class="text-green-600 font-medium">Available Mentor</p>
+            <h3 class="text-2xl font-bold text-zinc-100">I Can Help</h3>
+            <p class="text-green-400 font-medium">Available Mentor</p>
           </div>
 
           <!-- Description -->
           <div class="flex-1">
-            <ul class="space-y-3 text-gray-600">
+            <ul class="space-y-3 text-zinc-300">
               <li class="flex items-start space-x-2">
                 <svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -100,29 +100,29 @@
           </div>
 
           <!-- What happens next -->
-          <div class="mt-6 pt-6 border-t border-gray-100">
-            <p class="text-sm text-gray-500 font-medium">Next: Set up your mentor profile</p>
+          <div class="mt-6 pt-6 border-t border-zinc-800">
+            <p class="text-sm text-zinc-400 font-medium">Next: Set up your mentor profile</p>
           </div>
         </div>
       </label>
 
       <!-- Both Option -->
       <label class="role-card group cursor-pointer">
-        <%= form.radio_button :role, "both", class: "sr-only role-radio" %>
-        <div class="bg-white border-2 border-gray-200 rounded-2xl p-8 transition-all duration-200 group-hover:border-purple-400 group-hover:shadow-lg group-hover:scale-105 h-full flex flex-col">
+        <%= form.radio_button :role, "both", class: "sr-only role-radio peer" %>
+        <div class="bg-zinc-900 border-2 border-zinc-700 rounded-2xl p-8 transition-all duration-200 group-hover:border-purple-400 group-hover:shadow-lg group-hover:scale-105 h-full flex flex-col peer-checked:ring-2 peer-checked:ring-purple-500/50">
 
           <!-- Icon -->
           <div class="text-center mb-6">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full mb-4">
-              <span class="text-3xl">🤝</span>
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full mb-4">
+              <span class="text-3xl"><i class="fa-solid fa-handshake"></i></span>
             </div>
-            <h3 class="text-2xl font-bold text-gray-900">Both!</h3>
-            <p class="text-purple-600 font-medium">Mentor & Mentee</p>
+            <h3 class="text-2xl font-bold text-zinc-100">Both!</h3>
+            <p class="text-purple-400 font-medium">Mentor & Mentee</p>
           </div>
 
           <!-- Description -->
           <div class="flex-1">
-            <ul class="space-y-3 text-gray-600">
+            <ul class="space-y-3 text-zinc-300">
               <li class="flex items-start space-x-2">
                 <svg class="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -145,8 +145,8 @@
           </div>
 
           <!-- What happens next -->
-          <div class="mt-6 pt-6 border-t border-gray-100">
-            <p class="text-sm text-gray-500 font-medium">Next: Complete setup & explore options</p>
+          <div class="mt-6 pt-6 border-t border-zinc-800">
+            <p class="text-sm text-zinc-400 font-medium">Next: Complete setup & explore options</p>
           </div>
         </div>
       </label>
@@ -176,56 +176,16 @@
   </div>
 </div>
 
-<!-- JavaScript for interactive role selection -->
+<!-- Enable Continue when a role is chosen (styling via CSS peer classes) -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const radioButtons = document.querySelectorAll('.role-radio');
-    const cards = document.querySelectorAll('.role-card');
+    const radios = document.querySelectorAll('.role-radio');
     const continueBtn = document.getElementById('continue-btn');
-
-    // Handle role selection
-    radioButtons.forEach((radio, index) => {
-      radio.addEventListener('change', function() {
-        // Reset all cards
-        cards.forEach(card => {
-          card.classList.remove('selected');
-          card.querySelector('div').classList.remove('border-blue-500', 'border-green-500', 'border-purple-500', 'bg-blue-50', 'bg-green-50', 'bg-purple-50');
-          card.querySelector('div').classList.add('border-gray-200');
-        });
-
-        // Highlight selected card
-        if (this.checked) {
-          const selectedCard = cards[index];
-          const cardDiv = selectedCard.querySelector('div');
-          selectedCard.classList.add('selected');
-
-          // Apply color based on role
-          const role = this.value;
-          if (role === 'mentee') {
-            cardDiv.classList.remove('border-gray-200');
-            cardDiv.classList.add('border-blue-500', 'bg-blue-50');
-          } else if (role === 'mentor') {
-            cardDiv.classList.remove('border-gray-200');
-            cardDiv.classList.add('border-green-500', 'bg-green-50');
-          } else if (role === 'both') {
-            cardDiv.classList.remove('border-gray-200');
-            cardDiv.classList.add('border-purple-500', 'bg-purple-50');
-          }
-
-          // Enable continue button
-          continueBtn.disabled = false;
-          continueBtn.classList.remove('disabled:opacity-50', 'disabled:cursor-not-allowed');
-        }
-      });
-    });
-
-    // Allow clicking anywhere on card to select
-    cards.forEach((card, index) => {
-      card.addEventListener('click', function(e) {
-        e.preventDefault();
-        radioButtons[index].checked = true;
-        radioButtons[index].dispatchEvent(new Event('change'));
-      });
-    });
+    function update() {
+      const anyChecked = Array.from(radios).some(r => r.checked);
+      continueBtn.disabled = !anyChecked;
+    }
+    radios.forEach(r => r.addEventListener('change', update));
+    update();
   });
 </script>

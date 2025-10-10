@@ -3,8 +3,8 @@
 <%= section_container do %>
   <%# Page Header %>
   <div class="mb-8">
-    <h1 class="text-4xl font-black tracking-tight text-zinc-900 text-center">✏️ Edit Your Profile</h1>
-    <p class="text-zinc-700 font-medium text-lg mt-2 text-center">Update your information to help connect with the right people</p>
+    <h1 class="text-4xl font-black tracking-tight text-zinc-100 text-center"><i class="fa-solid fa-pen-to-square mr-2"></i> Edit Your Profile</h1>
+    <p class="text-zinc-400 font-medium text-lg mt-2 text-center">Update your information to help connect with the right people</p>
   </div>
 
   <%# Form %>
@@ -12,7 +12,7 @@
 
   <%# Navigation %>
   <div class="max-w-2xl mx-auto mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-    <%= button_secondary "👀 View Profile", @profile %>
-    <%= button_secondary "← Back to Mentors", profiles_path %>
+    <%= button_secondary raw('<i class="fa-solid fa-eye mr-2"></i> View Profile'), @profile %>
+    <%= button_secondary raw('<i class="fa-solid fa-arrow-left mr-2"></i> Back to Mentors'), profiles_path %>
   </div>
 <% end %>

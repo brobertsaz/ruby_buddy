@@ -1,9 +1,11 @@
-# Ruby Buddy (Pay It Forward) - Project Index
+# Ruby Pair (Pay It Forward) - Project Index
 
 ## 📋 Project Overview
-**Ruby Buddy** is a Rails 8 mentorship platform connecting experienced Ruby developers (mentors) with junior developers (mentees). The app facilitates mentor discovery, mentorship requests, and direct messaging.
+
+**Ruby Pair** is a Rails 8 mentorship platform connecting experienced Ruby developers (mentors) with junior developers (mentees). The app facilitates mentor discovery, mentorship requests, and direct messaging.
 
 ## 🏗️ Architecture
+
 - **Framework**: Rails 8.0.2+ with Hotwire (Turbo + Stimulus)
 - **Frontend**: Tailwind CSS, Importmap (no Node.js)
 - **Database**: PostgreSQL
@@ -81,25 +83,30 @@ ruby_buddy/
 ## 🏛️ Core Models & Relationships
 
 ### User (Devise)
+
 - **Purpose**: Authentication and base user management
 - **Relationships**: `has_one :profile`, `has_many :mentorship_requests`, `has_many :messages`
 
 ### Profile
+
 - **Purpose**: Public mentor/mentee profiles with skills and availability
 - **Key Fields**: `name`, `bio`, `years_experience`, `timezone`, `skills`, `mentor`, `mentee`
 - **Relationships**: `belongs_to :user`
 
 ### MentorshipRequest
+
 - **Purpose**: Connection requests between mentees and mentors
 - **Key Fields**: `topic`, `goals`, `preferred_times`, `status` (enum: open/accepted/closed)
 - **Relationships**: `belongs_to :mentee (User)`, `belongs_to :mentor (User)`, `has_many :messages`
 
 ### Message
+
 - **Purpose**: Threaded messaging within mentorship requests
 - **Key Fields**: `body`, `created_at`
 - **Relationships**: `belongs_to :mentorship_request`, `belongs_to :user`
 
 ## 🛣️ Key Routes
+
 ```ruby
 root 'home#index'                    # Landing page
 devise_for :users                    # Authentication routes
@@ -109,12 +116,14 @@ resources :messages                  # Messaging system
 ```
 
 ## 🎨 Frontend Technology
+
 - **Styling**: Tailwind CSS with utility-first approach
 - **JavaScript**: Hotwire (Turbo + Stimulus) for SPA-like experience
 - **Assets**: Importmap (no Node.js build process)
 - **Layout**: Fixed translucent header, hero sections, responsive grids
 
 ## 🔐 Authentication & Authorization
+
 - **System**: Devise with email/password
 - **Access Control**:
   - Profiles: Public browsing, authenticated CRUD
@@ -122,6 +131,7 @@ resources :messages                  # Messaging system
   - Messages: Authenticated, limited to request participants
 
 ## 🗃️ Database Schema
+
 ```sql
 # PostgreSQL databases with pay_it_forward_* prefix
 - users (Devise standard fields)
@@ -131,6 +141,7 @@ resources :messages                  # Messaging system
 ```
 
 ## 🚀 Development Commands
+
 ```bash
 # Setup
 bin/rails db:create db:migrate
@@ -148,7 +159,9 @@ bundle exec brakeman                 # Security analysis
 ```
 
 ## 🎯 Current MVP Features
+
 ✅ **Implemented**:
+
 - User authentication (Devise)
 - Public mentor directory with search
 - Profile management (mentor/mentee flags)
@@ -157,6 +170,7 @@ bundle exec brakeman                 # Security analysis
 - Responsive Tailwind UI
 
 🚧 **Future Enhancements**:
+
 - Skills taxonomy with tags
 - Calendar integration for availability
 - Email notifications
@@ -165,7 +179,8 @@ bundle exec brakeman                 # Security analysis
 
 ## 🔍 Quick Navigation
 
-### Need to find...
+### Need to find
+
 - **Landing page**: `app/views/home/index.html.erb`
 - **User authentication**: `app/models/user.rb` + Devise config
 - **Mentor directory**: `app/controllers/profiles_controller.rb`
@@ -175,7 +190,8 @@ bundle exec brakeman                 # Security analysis
 - **Routes**: `config/routes.rb`
 - **Styling**: `app/assets/stylesheets/application.tailwind.css`
 
-### Common tasks locations:
+### Common tasks locations
+
 - **Add new feature**: Start with `config/routes.rb`, then generate controller/model
 - **Modify UI**: Views in `app/views/`, styles in Tailwind classes
 - **Database changes**: Create migration with `bin/rails generate migration`

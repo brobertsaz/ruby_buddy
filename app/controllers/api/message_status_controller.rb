@@ -37,7 +37,11 @@ class Api::MessageStatusController < Api::BaseController
   def bulk_mark_read
     message_ids = params[:message_ids]
 
-    if message_ids.blank?
+    # Check for nil, empty array, or array with only blank values (Rails converts [] to [""])
+    if message_ids.nil? ||
+       message_ids == [] ||
+       (message_ids.is_a?(Array) && message_ids.empty?) ||
+       (message_ids.is_a?(Array) && message_ids.all?(&:blank?))
       return render_json_error("No message IDs provided")
     end
 

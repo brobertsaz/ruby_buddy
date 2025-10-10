@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["connectionStatus", "reconnectButton"]
+  static targets = ["connectionStatus", "reconnectButton", "messageList"]
   static values = {
     mentorshipRequestId: Number,
     currentUserId: Number,
@@ -11,19 +11,55 @@ export default class extends Controller {
   connect() {
     console.log("✨ Chat connection controller connected - ready for real-time features! ✨")
     this.initializeConnectionStatus()
+    this.scrollToBottom()
+
+    // Listen for turbo stream updates to scroll to bottom
+    document.addEventListener('turbo:before-stream-render', this.handleStreamRender.bind(this))
+  }
+
+  disconnect() {
+    document.removeEventListener('turbo:before-stream-render', this.handleStreamRender.bind(this))
+  }
+
+  handleStreamRender(event) {
+    // Auto-scroll when new messages arrive
+    setTimeout(() => this.scrollToBottom(), 100)
+  }
+
+  scrollToBottom() {
+    if (this.hasMessageListTarget) {
+      this.messageListTarget.scrollTop = this.messageListTarget.scrollHeight
+    }
   }
 
   // Initialize beautiful connection status indicator
   initializeConnectionStatus() {
     if (this.hasConnectionStatusTarget) {
       this.connectionStatusTarget.innerHTML = `
-        <div class="connection-status connected flex items-center space-x-2 px-3 py-2 bg-green-50 border border-green-200 rounded-lg">
-          <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-          </svg>
-          <span class="text-sm font-medium text-green-700">Connected</span>
+        <div class="connection-status connected flex items-center space-x-2 px-3 py-1.5 bg-zinc-800/50 border border-zinc-700 rounded-lg">
+          <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+          <span class="text-xs font-medium text-zinc-400">Live</span>
         </div>
       `
+    }
+  }
+
+  // Handle message sending start
+  handleMessageSending(event) {
+    console.log("Message sending started...")
+  }
+
+  // Handle message sent completion
+  handleMessageSent(event) {
+    console.log("Message sent successfully!")
+    // Clear the form after successful send
+    const form = event.target
+    if (form && form.tagName === 'FORM') {
+      const textarea = form.querySelector('textarea')
+      if (textarea) {
+        textarea.value = ''
+        textarea.style.height = 'auto'
+      }
     }
   }
 

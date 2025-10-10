@@ -5,15 +5,21 @@
   <div class="mb-8">
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div>
-        <h1 class="text-4xl font-black tracking-tight text-zinc-900">📋 Mentorship Requests</h1>
+        <h1 class="text-4xl font-black tracking-tight text-zinc-100">Mentorship Requests</h1>
         <% if user_signed_in? %>
-          <p class="text-zinc-700 font-medium text-lg mt-2">Your mentorship requests and opportunities to help others! 💎</p>
+          <% if current_user.mentor? && !current_user.mentee? %>
+            <p class="text-zinc-400 font-medium text-lg mt-2">Requests from the community looking for your expertise!</p>
+          <% else %>
+            <p class="text-zinc-400 font-medium text-lg mt-2">Your mentorship requests and opportunities to help others!</p>
+          <% end %>
         <% else %>
-          <p class="text-zinc-700 font-medium text-lg mt-2">Browse open mentorship requests from the Ruby community! 💎</p>
+          <p class="text-zinc-400 font-medium text-lg mt-2">Browse open mentorship requests from the Ruby community!</p>
         <% end %>
       </div>
       <% if user_signed_in? %>
-        <%= button_primary "✨ New request", new_mentorship_request_path %>
+        <% if current_user.mentee? %>
+          <%= button_primary raw('<i class="fa-solid fa-plus mr-2"></i> New request'), new_mentorship_request_path %>
+        <% end %>
       <% else %>
         <%= link_to "Sign up to request mentorship", new_user_registration_path, class: "inline-flex items-center gap-1.5 rounded-lg bg-rose-600 px-4 py-2 text-white font-bold hover:bg-rose-700 transition-colors shadow-md" %>
       <% end %>
@@ -30,9 +36,9 @@
               <%= render mentorship_request %>
             </div>
             <div class="flex flex-col sm:flex-row gap-2 lg:flex-col lg:w-auto">
-              <%= button_secondary "👀 View", mentorship_request, class: "text-sm" %>
-              <%= button_secondary "✏️ Edit", edit_mentorship_request_path(mentorship_request), class: "text-sm" %>
-              <%= button_to "🗑️ Delete", mentorship_request, method: :delete,
+              <%= button_secondary raw('<i class="fa-solid fa-eye mr-2"></i> View'), mentorship_request, class: "text-sm" %>
+              <%= button_secondary raw('<i class="fa-solid fa-pen mr-2"></i> Edit'), edit_mentorship_request_path(mentorship_request), class: "text-sm" %>
+              <%= button_to raw('<i class="fa-solid fa-trash mr-2"></i> Delete'), mentorship_request, method: :delete,
                     class: "inline-flex items-center gap-2 rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors shadow-lg",
                     data: { turbo_confirm: "Are you sure you want to delete this request?" } %>
             </div>
@@ -40,7 +46,11 @@
         </div>
       <% end %>
     <% else %>
-      <%= empty_state "No mentorship requests found yet. Create your first one!", "📋" %>
+      <% if user_signed_in? && current_user.mentor? && !current_user.mentee? %>
+        <%= empty_state "No mentorship requests yet. When mentees create requests, they'll appear here!", "fa-regular fa-clipboard" %>
+      <% else %>
+        <%= empty_state "No mentorship requests found yet. Create your first one!", "fa-regular fa-clipboard" %>
+      <% end %>
     <% end %>
   </div>
 <% end %>

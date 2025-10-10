@@ -1,15 +1,163 @@
-<% content_for :title, "Showing profile" %>
+<% content_for :title, @profile.name.presence || "Mentor Profile" %>
 
-<div class="md:w-2/3 w-full">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+<%= section_container do %>
+  <!-- Hero Section -->
+  <div class="glass-card rounded-2xl p-8 mb-8">
+    <div class="flex flex-col lg:flex-row gap-8 items-start">
+      <!-- Avatar Placeholder -->
+      <div class="flex-shrink-0">
+        <div class="w-32 h-32 rounded-full bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center text-white text-5xl font-black shadow-xl">
+          <%= @profile.name.presence&.first&.upcase || @profile.user.email.first.upcase %>
+        </div>
+      </div>
+
+      <!-- Profile Info -->
+      <div class="flex-1">
+        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
+          <div>
+            <h1 class="text-4xl font-black text-zinc-100 mb-2">
+              <%= @profile.name.presence || @profile.user.email.split('@').first.titleize %>
+            </h1>
+            <div class="flex flex-wrap gap-3 text-zinc-400">
+              <% if @profile.years_experience.present? %>
+                <span class="inline-flex items-center gap-1">
+                  <i class="fa-solid fa-star text-rose-400"></i>
+                  <strong class="text-zinc-300"><%= @profile.years_experience %></strong> years experience
+                </span>
+              <% end %>
+              <% if @profile.timezone.present? %>
+                <span class="inline-flex items-center gap-1">
+                  <i class="fa-solid fa-earth-americas text-rose-400"></i>
+                  <%= @profile.timezone %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap gap-2">
+            <% if user_signed_in? && current_user.profile == @profile %>
+              <%= link_to raw('<i class="fa-solid fa-pen mr-2"></i> Edit Profile'), edit_profile_path(@profile), class: "inline-flex items-center gap-2 rounded-lg bg-zinc-700 px-4 py-2 text-white font-semibold border border-zinc-600 hover:bg-zinc-600 transition-colors shadow-lg" %>
+            <% elsif user_signed_in? %>
+              <%= link_to raw('<i class="fa-solid fa-paper-plane mr-2"></i> Request Mentorship'), new_mentorship_request_path(mentorship_request: { mentor_id: @profile.user_id }), class: "inline-flex items-center gap-2 rounded-lg bg-rose-600 px-6 py-3 text-white font-bold hover:bg-rose-700 transition-colors shadow-xl" %>
+            <% else %>
+              <%= link_to raw('<i class="fa-solid fa-user-plus mr-2"></i> Sign up to request'), new_user_registration_path, class: "inline-flex items-center gap-2 rounded-lg bg-rose-600 px-6 py-3 text-white font-bold hover:bg-rose-700 transition-colors shadow-xl" %>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Bio -->
+        <% if @profile.bio.present? %>
+          <div class="prose prose-invert max-w-none">
+            <p class="text-zinc-300 text-lg leading-relaxed"><%= @profile.bio %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skills & Details Grid -->
+  <div class="grid lg:grid-cols-3 gap-6 mb-8">
+    <!-- Skills -->
+    <div class="lg:col-span-2 glass-card rounded-xl p-6">
+      <h2 class="text-2xl font-bold text-zinc-100 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-fire text-rose-400"></i>
+        Skills & Expertise
+      </h2>
+      <% if @profile.skills.present? %>
+        <div class="flex flex-wrap gap-2">
+          <% @profile.skills.to_s.split(',').map(&:strip).reject(&:blank?).each do |skill| %>
+            <span class="inline-flex items-center rounded-full bg-rose-600 text-white text-sm px-4 py-2 shadow-md font-bold">
+              <i class="fa-solid fa-code mr-2"></i> <%= skill %>
+            </span>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-zinc-500 italic">No skills listed yet</p>
+      <% end %>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="glass-card rounded-xl p-6">
+      <h2 class="text-2xl font-bold text-zinc-100 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-chart-simple text-rose-400"></i>
+        Quick Info
+      </h2>
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-zinc-400">Status</span>
+          <% if @profile.mentor? %>
+            <span class="inline-flex items-center rounded-full bg-green-500/10 text-green-300 px-3 py-1 text-xs font-bold ring-1 ring-green-500/30">
+              <i class="fa-solid fa-circle-check mr-1"></i> Available
+            </span>
+          <% else %>
+            <span class="inline-flex items-center rounded-full bg-zinc-700 text-zinc-400 px-3 py-1 text-xs font-bold">
+              Not mentoring
+            </span>
+          <% end %>
+        </div>
+        <% if @profile.years_experience.present? %>
+          <div class="flex items-center justify-between">
+            <span class="text-zinc-400">Experience</span>
+            <span class="text-zinc-100 font-bold"><%= @profile.years_experience %> years</span>
+          </div>
+        <% end %>
+        <% if @profile.timezone.present? %>
+          <div class="flex items-center justify-between">
+            <span class="text-zinc-400">Timezone</span>
+            <span class="text-zinc-100 font-bold"><%= @profile.timezone.split('/').last.gsub('_', ' ') %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Availability -->
+  <% if @profile.availability.present? %>
+    <div class="glass-card rounded-xl p-6 mb-8">
+      <h2 class="text-2xl font-bold text-zinc-100 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-calendar-days text-rose-400"></i>
+        Availability
+      </h2>
+      <p class="text-zinc-300 leading-relaxed"><%= simple_format(@profile.availability) %></p>
+    </div>
   <% end %>
 
-  <h1 class="font-bold text-4xl text-zinc-900">Showing profile</h1>
+  <!-- Social Links -->
+  <% if @profile.github_url.present? || @profile.x_url.present? || @profile.website_url.present? %>
+    <div class="glass-card rounded-xl p-6 mb-8">
+      <h2 class="text-2xl font-bold text-zinc-100 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-link text-rose-400"></i>
+        Connect
+      </h2>
+      <div class="flex flex-wrap gap-3">
+        <% if @profile.github_url.present? %>
+          <%= link_to @profile.github_url, target: "_blank", rel: "noopener", class: "inline-flex items-center gap-2 rounded-lg bg-zinc-800 px-4 py-2 text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors border border-zinc-700" do %>
+            <i class="fa-brands fa-github text-xl"></i>
+            <span class="font-medium">GitHub</span>
+          <% end %>
+        <% end %>
+        <% if @profile.x_url.present? %>
+          <%= link_to @profile.x_url, target: "_blank", rel: "noopener", class: "inline-flex items-center gap-2 rounded-lg bg-zinc-800 px-4 py-2 text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors border border-zinc-700" do %>
+            <i class="fa-brands fa-x-twitter text-xl"></i>
+            <span class="font-medium">X / Twitter</span>
+          <% end %>
+        <% end %>
+        <% if @profile.website_url.present? %>
+          <%= link_to @profile.website_url, target: "_blank", rel: "noopener", class: "inline-flex items-center gap-2 rounded-lg bg-zinc-800 px-4 py-2 text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors border border-zinc-700" do %>
+            <i class="fa-solid fa-globe text-xl"></i>
+            <span class="font-medium">Website</span>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 
-  <%= render @profile %>
-
-  <%= link_to "Edit this profile", edit_profile_path(@profile), class: "w-full sm:w-auto text-center rounded-lg px-3.5 py-2.5 bg-zinc-700 hover:bg-zinc-600 text-white inline-block font-medium border border-zinc-600" %>
-  <%= link_to "Back to profiles", profiles_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-lg px-3.5 py-2.5 bg-zinc-700 hover:bg-zinc-600 text-white inline-block font-medium border border-zinc-600" %>
-  <%= button_to "Destroy this profile", @profile, method: :delete, form_class: "sm:inline-block mt-2 sm:mt-0 sm:ml-2", class: "w-full rounded-lg px-3.5 py-2.5 text-white bg-rose-600 hover:bg-rose-700 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
-</div>
+  <!-- Back Button -->
+  <div class="flex gap-3">
+    <%= link_to raw('<i class="fa-solid fa-arrow-left mr-2"></i> Back to Mentors'), profiles_path, class: "inline-flex items-center gap-2 rounded-lg bg-zinc-700 px-4 py-2 text-white font-semibold border border-zinc-600 hover:bg-zinc-600 transition-colors" %>
+    <% if user_signed_in? && current_user.profile == @profile %>
+      <%= button_to raw('<i class="fa-solid fa-trash mr-2"></i> Delete Profile'), @profile, method: :delete, class: "inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-white font-semibold hover:bg-red-700 transition-colors", data: { turbo_confirm: "Are you sure you want to delete your profile? This cannot be undone." } %>
+    <% end %>
+  </div>
+<% end %>

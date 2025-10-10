@@ -1,0 +1,192 @@
+<% content_for :title, "Account Settings" %>
+
+<%= section_container do %>
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-4xl font-black text-zinc-100 mb-2">
+      <i class="fa-solid fa-gear mr-2 text-rose-400"></i>
+      Account Settings
+    </h1>
+    <p class="text-zinc-400 text-lg">Manage your account preferences and security</p>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6">
+    <!-- Role Settings -->
+    <div class="glass-card rounded-xl p-6">
+      <h2 class="text-2xl font-bold text-zinc-100 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-user-tag text-rose-400"></i>
+        Your Role
+      </h2>
+      <p class="text-zinc-400 mb-4">
+        Current role: <strong class="text-zinc-100"><%= current_user.display_role %></strong>
+      </p>
+      <%= form_with url: settings_update_role_path, method: :patch, class: "space-y-4" do |f| %>
+        <div>
+          <label class="block text-sm font-medium text-zinc-300 mb-2">Change Role</label>
+          <%= f.select :role, 
+              options_for_select([
+                ['Mentee (Looking for mentorship)', 'mentee'],
+                ['Mentor (Offering mentorship)', 'mentor'],
+                ['Both (Mentor & Mentee)', 'both']
+              ], current_user.role),
+              {},
+              class: "w-full rounded-lg border-2 border-zinc-700 bg-zinc-900 text-zinc-100 px-4 py-3 focus:ring-rose-500 focus:border-rose-500" %>
+        </div>
+        <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+          <p class="text-sm text-yellow-300">
+            <i class="fa-solid fa-triangle-exclamation mr-1"></i>
+            <strong>Note:</strong> Changing your role may affect which features you can access.
+          </p>
+        </div>
+        <%= f.submit "Update Role", class: "w-full rounded-lg bg-rose-600 px-4 py-3 text-white font-bold hover:bg-rose-700 transition-colors shadow-lg" %>
+      <% end %>
+    </div>
+
+    <!-- Email Settings -->
+    <div class="glass-card rounded-xl p-6">
+      <h2 class="text-2xl font-bold text-zinc-100 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-envelope text-rose-400"></i>
+        Email Address
+      </h2>
+      <p class="text-zinc-400 mb-4">
+        Current email: <strong class="text-zinc-100"><%= current_user.email %></strong>
+      </p>
+      <%= form_with url: settings_update_email_path, method: :patch, class: "space-y-4" do |f| %>
+        <div>
+          <label class="block text-sm font-medium text-zinc-300 mb-2">New Email</label>
+          <%= f.email_field :email, 
+              value: current_user.email,
+              class: "w-full rounded-lg border-2 border-zinc-700 bg-zinc-900 text-zinc-100 placeholder-zinc-500 focus:ring-rose-500 focus:border-rose-500 px-4 py-3",
+              placeholder: "your@email.com" %>
+        </div>
+        <%= f.submit "Update Email", class: "w-full rounded-lg bg-rose-600 px-4 py-3 text-white font-bold hover:bg-rose-700 transition-colors shadow-lg" %>
+      <% end %>
+    </div>
+
+    <!-- Password Settings -->
+    <div class="glass-card rounded-xl p-6 lg:col-span-2">
+      <h2 class="text-2xl font-bold text-zinc-100 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-lock text-rose-400"></i>
+        Change Password
+      </h2>
+      <%= form_with url: settings_update_password_path, method: :patch, class: "space-y-4 max-w-2xl" do |f| %>
+        <div class="grid md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-zinc-300 mb-2">Current Password</label>
+            <%= f.password_field :current_password, 
+                class: "w-full rounded-lg border-2 border-zinc-700 bg-zinc-900 text-zinc-100 placeholder-zinc-500 focus:ring-rose-500 focus:border-rose-500 px-4 py-3",
+                placeholder: "••••••••",
+                autocomplete: "current-password" %>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-zinc-300 mb-2">New Password</label>
+            <%= f.password_field :password, 
+                class: "w-full rounded-lg border-2 border-zinc-700 bg-zinc-900 text-zinc-100 placeholder-zinc-500 focus:ring-rose-500 focus:border-rose-500 px-4 py-3",
+                placeholder: "••••••••",
+                autocomplete: "new-password" %>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-zinc-300 mb-2">Confirm New Password</label>
+            <%= f.password_field :password_confirmation, 
+                class: "w-full rounded-lg border-2 border-zinc-700 bg-zinc-900 text-zinc-100 placeholder-zinc-500 focus:ring-rose-500 focus:border-rose-500 px-4 py-3",
+                placeholder: "••••••••",
+                autocomplete: "new-password" %>
+          </div>
+        </div>
+        <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+          <p class="text-sm text-blue-300">
+            <i class="fa-solid fa-info-circle mr-1"></i>
+            Password must be at least 6 characters long.
+          </p>
+        </div>
+        <%= f.submit "Update Password", class: "rounded-lg bg-rose-600 px-6 py-3 text-white font-bold hover:bg-rose-700 transition-colors shadow-lg" %>
+      <% end %>
+    </div>
+
+    <!-- Account Info -->
+    <div class="glass-card rounded-xl p-6 lg:col-span-2">
+      <h2 class="text-2xl font-bold text-zinc-100 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-circle-info text-rose-400"></i>
+        Account Information
+      </h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div>
+          <p class="text-sm text-zinc-400 mb-1">Member Since</p>
+          <p class="text-lg font-bold text-zinc-100">
+            <%= current_user.created_at.strftime("%B %Y") %>
+          </p>
+        </div>
+        <div>
+          <p class="text-sm text-zinc-400 mb-1">Role</p>
+          <p class="text-lg font-bold text-zinc-100">
+            <%= current_user.display_role %>
+          </p>
+        </div>
+        <div>
+          <p class="text-sm text-zinc-400 mb-1">Onboarding Status</p>
+          <% if current_user.onboarding_completed? %>
+            <span class="inline-flex items-center rounded-full bg-green-500/10 text-green-300 px-3 py-1 text-sm font-bold ring-1 ring-green-500/30">
+              <i class="fa-solid fa-check mr-1"></i> Complete
+            </span>
+          <% else %>
+            <span class="inline-flex items-center rounded-full bg-yellow-500/10 text-yellow-300 px-3 py-1 text-sm font-bold ring-1 ring-yellow-500/30">
+              <i class="fa-solid fa-clock mr-1"></i> Incomplete
+            </span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="glass-card rounded-xl p-6 lg:col-span-2">
+      <h2 class="text-2xl font-bold text-zinc-100 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-link text-rose-400"></i>
+        Quick Links
+      </h2>
+      <div class="grid md:grid-cols-3 gap-3">
+        <% if current_user.profile&.persisted? %>
+          <%= link_to edit_profile_path(current_user.profile), class: "flex items-center gap-3 p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-rose-500/50 transition-colors group" do %>
+            <div class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400 group-hover:bg-green-500/20 transition-colors">
+              <i class="fa-solid fa-user-pen"></i>
+            </div>
+            <div class="flex-1">
+              <p class="font-semibold text-zinc-100">Edit Profile</p>
+              <p class="text-xs text-zinc-400">Update mentor info</p>
+            </div>
+          <% end %>
+        <% elsif current_user.mentor? %>
+          <%= link_to new_profile_path, class: "flex items-center gap-3 p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-rose-500/50 transition-colors group" do %>
+            <div class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-green-400 group-hover:bg-green-500/20 transition-colors">
+              <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <div class="flex-1">
+              <p class="font-semibold text-zinc-100">Create Profile</p>
+              <p class="text-xs text-zinc-400">Set up mentoring</p>
+            </div>
+          <% end %>
+        <% end %>
+
+        <%= link_to dashboard_path, class: "flex items-center gap-3 p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-rose-500/50 transition-colors group" do %>
+          <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:bg-blue-500/20 transition-colors">
+            <i class="fa-solid fa-gauge-high"></i>
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-zinc-100">Dashboard</p>
+            <p class="text-xs text-zinc-400">View overview</p>
+          </div>
+        <% end %>
+
+        <%= link_to profiles_path, class: "flex items-center gap-3 p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-rose-500/50 transition-colors group" do %>
+          <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 group-hover:bg-purple-500/20 transition-colors">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-zinc-100">Browse Mentors</p>
+            <p class="text-xs text-zinc-400">Find expertise</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+

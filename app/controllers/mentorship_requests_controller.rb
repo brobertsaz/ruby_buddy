@@ -32,6 +32,7 @@ class MentorshipRequestsController < ApplicationController
 
     respond_to do |format|
       if @mentorship_request.save
+        current_user.update(onboarding_completed: true) if current_user.role.present? && !current_user.onboarding_completed?
         format.html { redirect_to @mentorship_request, notice: "Mentorship request was successfully created." }
         format.json { render :show, status: :created, location: @mentorship_request }
       else
@@ -61,6 +62,42 @@ class MentorshipRequestsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to mentorship_requests_path, notice: "Mentorship request was successfully destroyed.", status: :see_other }
       format.json { head :no_content }
+    end
+  end
+
+  # POST /mentorship_requests/1/accept
+  def accept
+    @mentorship_request = MentorshipRequest.find(params[:id])
+
+    if @mentorship_request.mentor_id == current_user.id
+      @mentorship_request.update(status: :accepted)
+      redirect_to @mentorship_request, notice: "Mentorship request accepted! You can now start chatting."
+    else
+      redirect_to @mentorship_request, alert: "You can only accept requests assigned to you."
+    end
+  end
+
+  # POST /mentorship_requests/1/decline
+  def decline
+    @mentorship_request = MentorshipRequest.find(params[:id])
+
+    if @mentorship_request.mentor_id == current_user.id
+      @mentorship_request.update(status: :closed, mentor_id: nil)
+      redirect_to mentorship_requests_path, notice: "Request declined."
+    else
+      redirect_to @mentorship_request, alert: "You can only decline requests assigned to you."
+    end
+  end
+
+  # POST /mentorship_requests/1/close
+  def close
+    @mentorship_request = MentorshipRequest.find(params[:id])
+
+    if @mentorship_request.mentee_id == current_user.id || @mentorship_request.mentor_id == current_user.id
+      @mentorship_request.update(status: :closed)
+      redirect_to mentorship_requests_path, notice: "Mentorship request closed."
+    else
+      redirect_to @mentorship_request, alert: "You don't have permission to close this request."
     end
   end
 
